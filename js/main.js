@@ -613,17 +613,17 @@ function alert(text){
     </div>`;
 }
 function changeData(copy){
-    if(copy['date'].length ==0 ||(!Button.isClicked('18+') && !Button.isClicked('45+') && !Button.isClicked('covishield') && !Button.isClicked('covaxin') && !Button.isClicked('sputnik') && !Button.isClicked('free') && !Button.isClicked('paid') && !Button.isClicked('1stDose') && !Button.isClicked('2ndDose'))){
+    if(copy['date'].length ==0 ||(!Button.isClicked('18+') && !Button.isClicked('45+') && !Button.isClicked('covishield') && !Button.isClicked('covaxin') && !Button.isClicked('sputnik v') && !Button.isClicked('free') && !Button.isClicked('paid') && !Button.isClicked('1stDose') && !Button.isClicked('2ndDose'))){
         return copy;
     }
-    if(Button.isClicked('covishield') && !Button.isClicked('covaxin') && !Button.isClicked('sputnik')){
+    if(Button.isClicked('covishield') && !Button.isClicked('covaxin') && !Button.isClicked('sputnik v')){
         for(let i=0;i<copy['date'].length;i++){
             if(copy['date'][i].hasOwnProperty('vaccine')){
                 if(copy['date'][i]['vaccine'].hasOwnProperty('COVAXIN')){
                     delete copy['date'][i]['vaccine']['COVAXIN'];
                 }
-                if(copy['date'][i]['vaccine'].hasOwnProperty('SPUTNIK')){
-                    delete copy['date'][i]['vaccine']['SPUTNIK'];
+                if(copy['date'][i]['vaccine'].hasOwnProperty('SPUTNIK V')){
+                    delete copy['date'][i]['vaccine']['SPUTNIK V'];
                 }
             }
             if(copy['date'][i].hasOwnProperty('Hospital')){
@@ -635,7 +635,7 @@ function changeData(copy){
                         if(j != l){
                             j--;
                         }
-                    }else if(copy['date'][i]['Hospital'][j]['vaccine']=="SPUTNIK"){
+                    }else if(copy['date'][i]['Hospital'][j]['vaccine']=="SPUTNIK V"){
                         copy['date'][i]['total']-=copy['date'][i]['Hospital'][j]['1stdose']+copy['date'][i]['Hospital'][j]['2nddose'];
                         copy['date'][i]['Hospital'].splice(j,1);
                         if(j != l){
@@ -645,14 +645,14 @@ function changeData(copy){
                 }
             }
         }
-    }else if(!Button.isClicked('covishield') && Button.isClicked('covaxin') && !Button.isClicked('sputnik')){
+    }else if(!Button.isClicked('covishield') && Button.isClicked('covaxin') && !Button.isClicked('sputnik v')){
         for(let i=0;i<copy['date'].length;i++){
             if(copy['date'][i].hasOwnProperty('vaccine')){
                 if(copy['date'][i]['vaccine'].hasOwnProperty('COVISHIELD')){
                     delete copy['date'][i]['vaccine']['COVISHIELD'];
                 }
-                if(copy['date'][i]['vaccine'].hasOwnProperty('SPUTNIK')){
-                    delete copy['date'][i]['vaccine']['SPUTNIK'];
+                if(copy['date'][i]['vaccine'].hasOwnProperty('SPUTNIK V')){
+                    delete copy['date'][i]['vaccine']['SPUTNIK V'];
                 }
             }
             if(copy['date'][i].hasOwnProperty('Hospital')){
@@ -664,7 +664,7 @@ function changeData(copy){
                         if(j != l){
                             j--;
                         }
-                    }else if(copy['date'][i]['Hospital'][j]['vaccine']=="SPUTNIK"){
+                    }else if(copy['date'][i]['Hospital'][j]['vaccine']=="SPUTNIK V"){
                         copy['date'][i]['total']-=copy['date'][i]['Hospital'][j]['1stdose']+copy['date'][i]['Hospital'][j]['2nddose'];
                         copy['date'][i]['Hospital'].splice(j,1);
                         if(j != l){
@@ -675,7 +675,7 @@ function changeData(copy){
                 
             }
         }
-    }else if(!Button.isClicked('covishield') && !Button.isClicked('covaxin') && Button.isClicked('sputnik')){
+    }else if(!Button.isClicked('covishield') && !Button.isClicked('covaxin') && Button.isClicked('sputnik v')){
         for(let i=0;i<copy['date'].length;i++){
             if(copy['date'][i].hasOwnProperty('vaccine')){
                 if(copy['date'][i]['vaccine'].hasOwnProperty('COVISHIELD')){
@@ -704,17 +704,17 @@ function changeData(copy){
                 }  
             }
         }
-    }else if(Button.isClicked('covishield') && Button.isClicked('covaxin') && !Button.isClicked('sputnik')){
+    }else if(Button.isClicked('covishield') && Button.isClicked('covaxin') && !Button.isClicked('sputnik v')){
         for(let i=0;i<copy['date'].length;i++){
             if(copy['date'][i].hasOwnProperty('vaccine')){
-                if(copy['date'][i]['vaccine'].hasOwnProperty('SPUTNIK')){
-                    delete copy['date'][i]['vaccine']['SPUTNIK'];
+                if(copy['date'][i]['vaccine'].hasOwnProperty('SPUTNIK V')){
+                    delete copy['date'][i]['vaccine']['SPUTNIK V'];
                 }
             }
             if(copy['date'][i].hasOwnProperty('Hospital')){
                 for(let j=0;j<copy['date'][i]['Hospital'].length;j++){
                     let l=copy['date'][i]['Hospital'].length-1;
-                    if(copy['date'][i]['Hospital'][j]['vaccine']=="SPUTNIK"){
+                    if(copy['date'][i]['Hospital'][j]['vaccine']=="SPUTNIK V"){
                         copy['date'][i]['total']-=copy['date'][i]['Hospital'][j]['1stdose']+copy['date'][i]['Hospital'][j]['2nddose'];
                         copy['date'][i]['Hospital'].splice(j,1);
                         if(j != l){
@@ -725,7 +725,7 @@ function changeData(copy){
                 
             }
         }
-    }else if(Button.isClicked('covishield') && !Button.isClicked('covaxin') && Button.isClicked('sputnik')){
+    }else if(Button.isClicked('covishield') && !Button.isClicked('covaxin') && Button.isClicked('sputnik v')){
         for(let i=0;i<copy['date'].length;i++){
             if(copy['date'][i].hasOwnProperty('vaccine')){
                 if(copy['date'][i]['vaccine'].hasOwnProperty('COVAXIN')){
@@ -746,7 +746,7 @@ function changeData(copy){
                 
             }
         }
-    }else if(!Button.isClicked('covishield') && Button.isClicked('covaxin') && Button.isClicked('sputnik')){
+    }else if(!Button.isClicked('covishield') && Button.isClicked('covaxin') && Button.isClicked('sputnik v')){
         for(let i=0;i<copy['date'].length;i++){
             if(copy['date'][i].hasOwnProperty('vaccine')){
                 if(copy['date'][i]['vaccine'].hasOwnProperty('COVISHIELD')){
@@ -1042,7 +1042,7 @@ var Button=(function (){
                     covaxin=(covaxin ? false: true);
                     covishield=false;
                     sputnik=false;
-                }else if(name=='sputnik'){
+                }else if(name=='sputnik v'){
                     sputnik=(sputnik ? false : true);
                     covishield=false;
                     covaxin=false;
@@ -1065,7 +1065,7 @@ var Button=(function (){
                     fourtyfive=(fourtyfive ? false : true);
                     eighteen=false;
                 }
-                if(name=='covishield' || name=='covaxin' || name=='sputnik'){
+                if(name=='covishield' || name=='covaxin' || name=='sputnik v'){
                     for(let i=1;i<4;i++){
                         let btn=document.getElementById(`vaccinefilter${i}`);
                         let val1=document.getElementById(`vaccinefilter`).innerHTML;
@@ -1100,6 +1100,7 @@ var Button=(function (){
                                     $('#agefilter').addClass('btn-secondary');
                                 }
                             }  
+                            break;
                         }
                     }
                 }else if(name=='free' || name=='paid'){
@@ -1118,6 +1119,7 @@ var Button=(function (){
                                     $('#feefilter').addClass('btn-secondary');
                                 }
                             }
+                            break;
                         }
                     }
                 }else if(name=='1stDose' || name=='2ndDose'){
@@ -1136,6 +1138,7 @@ var Button=(function (){
                                     $('#dosefilter').addClass('btn-secondary');
                                 }
                             }
+                            break;
                         }
                     }
                 }else{
@@ -1158,7 +1161,7 @@ var Button=(function (){
                 return covishield;
             }else if(name=='covaxin'){
                 return covaxin;
-            }else if(name=='sputnik'){
+            }else if(name=='sputnik v'){
                 return sputnik;
             }else if(name=='18+'){
                 return eighteen;
@@ -1175,7 +1178,7 @@ var Button=(function (){
             }
         },
         filterList: ()=>{
-            return ['covishield','covaxin','sputnik','1stDose','2ndDose','18+','45+','free','paid'];
+            return ['covishield','covaxin','sputnik v','1stDose','2ndDose','18+','45+','free','paid'];
         }
     }
 })();
@@ -1660,12 +1663,12 @@ function plotData(type,date){
         </div>
         <div class="btn-group">
             <button type="button" id="vaccinefilter" class="btn ${(Button.isClicked('covishield') || Button.isClicked('covaxin') || Button.isClicked('sputnik') ? "Button-clicked": "btn-secondary")} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            ${(Button.isClicked('covishield') ? "COVISHIELD": (Button.isClicked('covaxin')? "COVAXIN":(Button.isClicked('sputnik')? "SPUTNIK":"COVISHIELD")))}  
+            ${(Button.isClicked('covishield') ? "COVISHIELD": (Button.isClicked('covaxin')? "COVAXIN":(Button.isClicked('sputnik v')? "SPUTNIK V":"COVISHIELD")))}  
             </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield')">COVISHIELD</a>
               <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
-              <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik')">SPUTNIK</a>
+              <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik v')">SPUTNIK V</a>
             </div>
         </div>
         <div class="btn-group">
@@ -1705,7 +1708,7 @@ function plotData(type,date){
             <div class="dropdown-menu">
                 <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield)">COVISHIELD</a>
               <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
-              <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik')">SPUTNIK</a>
+              <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik v')">SPUTNIK V</a>
             </div>
         </div>
         <div class="btn-group">
@@ -1736,7 +1739,7 @@ function addBadges(obj,index){
         }else{
             let res=`<span class="badge badge-info" title="this date has this vaccine available">${obj[index]['vaccine']}</span> `;
             res+=`<span class="badge badge-info" title="this date has vaccines available for this age-group">${obj[index]['min_age']+'+'}</span> `;
-            res+=`<span class="badge badge-info" title="this date has vaccines available by this mode of payment">${obj[index]['fee_type']}</span> `;
+            res+=`<span class="badge badge-info" title="this date has vaccines available by this mode of payment">${(obj[index]['fee_type']=='Paid' ? "Paid(&#x20B9; "+obj[index]['fees']+")" : "Free")}</span> `;
             if(obj[index]['1stdose'] > 0){
                 res+=`<span class="badge badge-info" title="this date has vaccines available for 1stdose of vaccination">1stdose</span> `;
             }
@@ -1819,6 +1822,8 @@ function ConvertData(data){
     }
     var res={};
     var datearray=[];
+    let vaccines=['COVISHIELD','COVAXIN','SPUTNIK V'];
+    let age_limits=[18,45];
     for(let i=0;i<date.length;i++){
         let datetemp={};
         var hospitaltemp=[];
@@ -1846,37 +1851,23 @@ function ConvertData(data){
                 hospitaldatatemp['1stdose']=data[j]['sessions'][k]['available_capacity_dose1'];
                 hospitaldatatemp['2nddose']=data[j]['sessions'][k]['available_capacity_dose2'];
                 hospitaldatatemp['min_age']=data[j]['sessions'][k]['min_age_limit'];
-                hospitaltemp.push(hospitaldatatemp);
-                if(data[j]['sessions'][k]['vaccine']=="COVISHIELD"){
-                    if(data[j].fee_type=="Free"){
-                        firstdosetemp["free"]+=data[j].sessions[k].available_capacity_dose1;
-                        seconddosetemp['free']+=data[j].sessions[k].available_capacity_dose2;
-                        datetemp['total']+=firstdosetemp['free']+seconddosetemp['free'];
-                    }else{
-                        firstdosetemp["paid"]+=data[j].sessions[k].available_capacity_dose1;
-                        seconddosetemp["paid"]+=data[j].sessions[k].available_capacity_dose2; 
-                        datetemp['total']+=firstdosetemp['paid']+seconddosetemp['paid'];
+                if('vaccine_fees' in data[j]){
+                    for(let l=data[j]['vaccine_fees'].length-1;l>=0;l--){
+                        if(data[j]['vaccine_fees'][l]['vaccine']=hospitaldatatemp['vaccine']){
+                            hospitaldatatemp['fees']=Number(data[j]['vaccine_fees'][l]['fee']);
+                            break;
+                        }
                     }
-                }else if(data[j]['sessions'][k]['vaccine']=="COVAXIN"){
-                    if(data[j].fee_type=="Free"){
-                        firstdosetemp["free"]+=data[j].sessions[k].available_capacity_dose1;
-                        seconddosetemp['free']+=data[j].sessions[k].available_capacity_dose2;
-                        datetemp['total']+=firstdosetemp['free']+seconddosetemp['free'];
-                    }else{
-                        firstdosetemp["paid"]+=data[j].sessions[k].available_capacity_dose1;
-                        seconddosetemp["paid"]+=data[j].sessions[k].available_capacity_dose2; 
-                        datetemp['total']+=firstdosetemp['paid']+seconddosetemp['paid'];
-                    } 
-                }else if(data[j]['sessions'][k]['vaccine']=="SPUTNIK"){
-                    if(data[j].fee_type=="Free"){
-                        firstdosetemp["free"]+=data[j].sessions[k].available_capacity_dose1;
-                        seconddosetemp['free']+=data[j].sessions[k].available_capacity_dose2;
-                        datetemp['total']+=firstdosetemp['free']+seconddosetemp['free'];
-                    }else{
-                        firstdosetemp["paid"]+=data[j].sessions[k].available_capacity_dose1;
-                        seconddosetemp["paid"]+=data[j].sessions[k].available_capacity_dose2;
-                        datetemp['total']+=firstdosetemp['paid']+seconddosetemp['paid']; 
-                    }  
+                }
+                hospitaltemp.push(hospitaldatatemp);
+                if(data[j].fee_type=="Free"){
+                    firstdosetemp["free"]+=data[j].sessions[k].available_capacity_dose1;
+                    seconddosetemp['free']+=data[j].sessions[k].available_capacity_dose2;
+                    datetemp['total']+=firstdosetemp['free']+seconddosetemp['free'];
+                }else{
+                    firstdosetemp["paid"]+=data[j].sessions[k].available_capacity_dose1;
+                    seconddosetemp["paid"]+=data[j].sessions[k].available_capacity_dose2; 
+                    datetemp['total']+=firstdosetemp['paid']+seconddosetemp['paid'];
                 }
                 if(dosetemp.hasOwnProperty('1stdose')){
                     dosetemp['1stdose'].free+=firstdosetemp.free;
@@ -1890,239 +1881,89 @@ function ConvertData(data){
                 }else{
                     dosetemp["2nddose"]=seconddosetemp;
                 }
-                if(data[j]['sessions'][k]['min_age_limit']==18){
-                    if(vaccinedatatemp.hasOwnProperty(18)){
-                        vaccinedatatemp['18']['1stdose']['free']+=dosetemp['1stdose']["free"];
-                        vaccinedatatemp['18']['1stdose']['paid']+=dosetemp['1stdose']["paid"];
-                        vaccinedatatemp['18']['2nddose']['free']+=dosetemp['2nddose']["free"];
-                        vaccinedatatemp['18']['2nddose']['paid']+=dosetemp['2nddose']["paid"];
-                    }else{
-                        vaccinedatatemp['18']=dosetemp;
-                    }
-                }else if(data[j]['sessions'][k]['min_age_limit']==45){
-                    if(vaccinedatatemp.hasOwnProperty(45)){
-                        vaccinedatatemp['45']['1stdose']['free']+=dosetemp['1stdose']["free"];
-                        vaccinedatatemp['45']['1stdose']['paid']+=dosetemp['1stdose']["paid"];
-                        vaccinedatatemp['45']['2nddose']['free']+=dosetemp['2nddose']["free"];
-                        vaccinedatatemp['45']['2nddose']['paid']+=dosetemp['2nddose']["paid"];
-                    }else{
-                        vaccinedatatemp['45']=dosetemp;
+                for(let m=0;m<age_limits.length;m++){
+                    if(data[j]['sessions'][k]['min_age_limit']==age_limits[m]){
+                        if(vaccinedatatemp.hasOwnProperty(age_limits[m])){
+                            vaccinedatatemp[`${age_limits[m]}`]['1stdose']['free']+=dosetemp['1stdose']["free"];
+                            vaccinedatatemp[`${age_limits[m]}`]['1stdose']['paid']+=dosetemp['1stdose']["paid"];
+                            vaccinedatatemp[`${age_limits[m]}`]['2nddose']['free']+=dosetemp['2nddose']["free"];
+                            vaccinedatatemp[`${age_limits[m]}`]['2nddose']['paid']+=dosetemp['2nddose']["paid"];
+                        }else{
+                            vaccinedatatemp[`${age_limits[m]}`]=dosetemp;
+                        }
                     }
                 }
-                if(data[j]['sessions'][k]['vaccine']=="COVISHIELD"){
-                    if(vaccinetemp.hasOwnProperty('COVISHIELD')){
-                        if(vaccinetemp['COVISHIELD'].hasOwnProperty(18)){
-                            if(vaccinedatatemp.hasOwnProperty(18)){
-                                vaccinetemp['COVISHIELD']['18']['1stdose']['free']+=vaccinedatatemp['18']['1stdose']["free"];
-                                vaccinetemp['COVISHIELD']['18']['1stdose']['paid']+=vaccinedatatemp['18']['1stdose']["paid"];
-                                vaccinetemp['COVISHIELD']['18']['2nddose']['free']+=vaccinedatatemp['18']['2nddose']["free"];
-                                vaccinetemp['COVISHIELD']['18']['2nddose']['paid']+=vaccinedatatemp['18']['2nddose']["paid"];
+                for(let m=0;m<vaccines.length;m++){
+                    if(data[j]['sessions'][k]['vaccine']==vaccines[m]){
+                        if(vaccinetemp.hasOwnProperty(vaccines[m])){
+                            for(let l=0;l<age_limits.length;l++){
+                                if(vaccinetemp[vaccines[m]].hasOwnProperty(age_limits[l])){
+                                    if(vaccinedatatemp.hasOwnProperty(age_limits[l])){
+                                        vaccinetemp[vaccines[m]][age_limits[l]]['1stdose']['free']+=vaccinedatatemp[age_limits[l]]['1stdose']["free"];
+                                        vaccinetemp[vaccines[m]][age_limits[l]]['1stdose']['paid']+=vaccinedatatemp[age_limits[l]]['1stdose']["paid"];
+                                        vaccinetemp[vaccines[m]][age_limits[l]]['2nddose']['free']+=vaccinedatatemp[age_limits[l]]['2nddose']["free"];
+                                        vaccinetemp[vaccines[m]][age_limits[l]]['2nddose']['paid']+=vaccinedatatemp[age_limits[l]]['2nddose']["paid"];
+                                    }
+                                }
                             }
+                        }else{
+                            vaccinetemp[vaccines[m]]=vaccinedatatemp;
                         }
-                        if(vaccinetemp['COVISHIELD'].hasOwnProperty(45)){
-                            if(vaccinedatatemp.hasOwnProperty(45)){
-                                vaccinetemp['COVISHIELD']['45']['1stdose']['free']+=vaccinedatatemp['45']['1stdose']["free"];
-                                vaccinetemp['COVISHIELD']['45']['1stdose']['paid']+=vaccinedatatemp['45']['1stdose']["paid"];
-                                vaccinetemp['COVISHIELD']['45']['2nddose']['free']+=vaccinedatatemp['45']['2nddose']["free"];
-                                vaccinetemp['COVISHIELD']['45']['2nddose']['paid']+=vaccinedatatemp['45']['2nddose']["paid"];
-                            } 
-                        }
-                    }else{
-                        vaccinetemp['COVISHIELD']=vaccinedatatemp;
-                    }
-                }else if(data[j]['sessions'][k]['vaccine']=="COVAXIN"){
-                    if(vaccinetemp.hasOwnProperty('COVAXIN')){
-                        if(vaccinetemp['COVAXIN'].hasOwnProperty(18)){
-                            if(vaccinedatatemp.hasOwnProperty(18)){
-                                vaccinetemp['COVAXIN']['18']['1stdose']['free']+=vaccinedatatemp['18']['1stdose']["free"];
-                                vaccinetemp['COVAXIN']['18']['1stdose']['paid']+=vaccinedatatemp['18']['1stdose']["paid"];
-                                vaccinetemp['COVAXIN']['18']['2nddose']['free']+=vaccinedatatemp['18']['2nddose']["free"];
-                                vaccinetemp['COVAXIN']['18']['2nddose']['paid']+=vaccinedatatemp['18']['2nddose']["paid"];
-                            }
-                        }
-                        if(vaccinetemp['COVAXIN'].hasOwnProperty(45)){
-                            if(vaccinedatatemp.hasOwnProperty(45)){
-                                vaccinetemp['COVAXIN']['45']['1stdose']['free']+=vaccinedatatemp['45']['1stdose']["free"];
-                                vaccinetemp['COVAXIN']['45']['1stdose']['paid']+=vaccinedatatemp['45']['1stdose']["paid"];
-                                vaccinetemp['COVAXIN']['45']['2nddose']['free']+=vaccinedatatemp['45']['2nddose']["free"];
-                                vaccinetemp['COVAXIN']['45']['2nddose']['paid']+=vaccinedatatemp['45']['2nddose']["paid"];
-                            } 
-                        }
-                    }else{
-                        vaccinetemp['COVAXIN']=vaccinedatatemp;
-                    }
-                }else if(data[j]['sessions'][k]['vaccine']=="SPUTNIK"){
-                    if(vaccinetemp.hasOwnProperty('SPUTNIK')){
-                        if(vaccinetemp['SPUTNIK'].hasOwnProperty(18)){
-                            if(vaccinedatatemp.hasOwnProperty(18)){
-                                vaccinetemp['SPUTNIK']['18']['1stdose']['free']+=vaccinedatatemp['18']['1stdose']["free"];
-                                vaccinetemp['SPUTNIK']['18']['1stdose']['paid']+=vaccinedatatemp['18']['1stdose']["paid"];
-                                vaccinetemp['SPUTNIK']['18']['2nddose']['free']+=vaccinedatatemp['18']['2nddose']["free"];
-                                vaccinetemp['SPUTNIK']['18']['2nddose']['paid']+=vaccinedatatemp['18']['2nddose']["paid"];
-                            }
-                        }
-                        if(vaccinetemp['SPUTNIK'].hasOwnProperty(45)){
-                            if(vaccinedatatemp.hasOwnProperty(45)){
-                                vaccinetemp['SPUTNIK']['45']['1stdose']['free']+=vaccinedatatemp['45']['1stdose']["free"];
-                                vaccinetemp['SPUTNIK']['45']['1stdose']['paid']+=vaccinedatatemp['45']['1stdose']["paid"];
-                                vaccinetemp['SPUTNIK']['45']['2nddose']['free']+=vaccinedatatemp['45']['2nddose']["free"];
-                                vaccinetemp['SPUTNIK']['45']['2nddose']['paid']+=vaccinedatatemp['45']['2nddose']["paid"];
-                            } 
-                        }
-                    }else{
-                        vaccinetemp['SPUTNIK']=vaccinedatatemp;
                     }
                 }
                 if(datetemp.hasOwnProperty('vaccine')){
-                    if(datetemp['vaccine'].hasOwnProperty('COVISHIELD')){
-                        let arr=Object.getOwnPropertyNames(vaccinetemp);
-                        if(vaccinetemp.hasOwnProperty('COVISHIELD')){
-                            if(datetemp['vaccine']['COVISHIELD'].hasOwnProperty(18)){
-                                if(vaccinetemp['COVISHIELD'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['COVISHIELD']['18']['1stdose']['free']+=vaccinetemp['COVISHIELD']['18']['1stdose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['18']['1stdose']['paid']+=vaccinetemp['COVISHIELD']['18']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVISHIELD']['18']['2nddose']['free']+=vaccinetemp['COVISHIELD']['18']['2nddose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['18']['2nddose']['paid']+=vaccinetemp['COVISHIELD']['18']['2nddose']["paid"];
-                                }else if(!datetemp['vaccine']['COVISHIELD'].hasOwnProperty(45) && vaccinetemp['COVISHIELD'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['COVISHIELD']['45']=vaccinetemp['COVISHIELD']['45'];
-                                }else if(datetemp['vaccine']['COVISHIELD'].hasOwnProperty(45) && vaccinetemp['COVISHIELD'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['COVISHIELD']['45']['1stdose']['free']+=vaccinetemp['COVISHIELD']['45']['1stdose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['45']['1stdose']['paid']+=vaccinetemp['COVISHIELD']['45']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVISHIELD']['45']['2nddose']['free']+=vaccinetemp['COVISHIELD']['45']['2nddose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['45']['2nddose']['paid']+=vaccinetemp['COVISHIELD']['45']['2nddose']["paid"];   
+                    for(let m=0;m<vaccines.length;m++){
+                        if(datetemp['vaccine'].hasOwnProperty(vaccines[m])){
+                            let arr=Object.getOwnPropertyNames(vaccinetemp);
+                            if(vaccinetemp.hasOwnProperty(vaccines[m])){
+                                if(datetemp['vaccine'][vaccines[m]].hasOwnProperty(18)){
+                                    if(vaccinetemp[vaccines[m]].hasOwnProperty(18)){
+                                        datetemp['vaccine'][vaccines[m]]['18']['1stdose']['free']+=vaccinetemp[vaccines[m]]['18']['1stdose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['18']['1stdose']['paid']+=vaccinetemp[vaccines[m]]['18']['1stdose']["paid"];
+                                        datetemp['vaccine'][vaccines[m]]['18']['2nddose']['free']+=vaccinetemp[vaccines[m]]['18']['2nddose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['18']['2nddose']['paid']+=vaccinetemp[vaccines[m]]['18']['2nddose']["paid"];
+                                    }else if(!datetemp['vaccine'][vaccines[m]].hasOwnProperty(45) && vaccinetemp[vaccines[m]].hasOwnProperty(45)){
+                                        datetemp['vaccine'][vaccines[m]]['45']=vaccinetemp[vaccines[m]]['45'];
+                                    }else if(datetemp['vaccine'][vaccines[m]].hasOwnProperty(45) && vaccinetemp[vaccines[m]].hasOwnProperty(45)){
+                                        datetemp['vaccine'][vaccines[m]]['45']['1stdose']['free']+=vaccinetemp[vaccines[m]]['45']['1stdose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['45']['1stdose']['paid']+=vaccinetemp[vaccines[m]]['45']['1stdose']["paid"];
+                                        datetemp['vaccine'][vaccines[m]]['45']['2nddose']['free']+=vaccinetemp[vaccines[m]]['45']['2nddose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['45']['2nddose']['paid']+=vaccinetemp[vaccines[m]]['45']['2nddose']["paid"];   
+                                    }
+                                }else if(datetemp['vaccine'][vaccines[m]].hasOwnProperty(45)){
+                                    if(vaccinetemp[vaccines[m]].hasOwnProperty(45)){
+                                        datetemp['vaccine'][vaccines[m]]['45']['1stdose']['free']+=vaccinetemp[vaccines[m]]['45']['1stdose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['45']['1stdose']['paid']+=vaccinetemp[vaccines[m]]['45']['1stdose']["paid"];
+                                        datetemp['vaccine'][vaccines[m]]['45']['2nddose']['free']+=vaccinetemp[vaccines[m]]['45']['2nddose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['45']['2nddose']['paid']+=vaccinetemp[vaccines[m]]['45']['2nddose']["paid"]; 
+                                    }else if(!datetemp['vaccine'][vaccines[m]].hasOwnProperty(18) && vaccinetemp[vaccines[m]].hasOwnProperty(18)){
+                                        datetemp['vaccine'][vaccines[m]]['18']=vaccinetemp[vaccines[m]]['18'];
+                                    }else if(datetemp['vaccine'][vaccines[m]].hasOwnProperty(18) && vaccinetemp[vaccines[m]].hasOwnProperty(18)){
+                                        datetemp['vaccine'][vaccines[m]]['18']['1stdose']['free']+=vaccinetemp[vaccines[m]]['18']['1stdose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['18']['1stdose']['paid']+=vaccinetemp[vaccines[m]]['18']['1stdose']["paid"];
+                                        datetemp['vaccine'][vaccines[m]]['18']['2nddose']['free']+=vaccinetemp[vaccines[m]]['18']['2nddose']["free"];
+                                        datetemp['vaccine'][vaccines[m]]['18']['2nddose']['paid']+=vaccinetemp[vaccines[m]]['18']['2nddose']["paid"];
+                                    }
                                 }
-                            }else if(datetemp['vaccine']['COVISHIELD'].hasOwnProperty(45)){
-                                if(vaccinetemp['COVISHIELD'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['COVISHIELD']['45']['1stdose']['free']+=vaccinetemp['COVISHIELD']['45']['1stdose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['45']['1stdose']['paid']+=vaccinetemp['COVISHIELD']['45']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVISHIELD']['45']['2nddose']['free']+=vaccinetemp['COVISHIELD']['45']['2nddose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['45']['2nddose']['paid']+=vaccinetemp['COVISHIELD']['45']['2nddose']["paid"]; 
-                                }else if(!datetemp['vaccine']['COVISHIELD'].hasOwnProperty(18) && vaccinetemp['COVISHIELD'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['COVISHIELD']['18']=vaccinetemp['COVISHIELD']['18'];
-                                }else if(datetemp['vaccine']['COVISHIELD'].hasOwnProperty(18) && vaccinetemp['COVISHIELD'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['COVISHIELD']['18']['1stdose']['free']+=vaccinetemp['COVISHIELD']['18']['1stdose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['18']['1stdose']['paid']+=vaccinetemp['COVISHIELD']['18']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVISHIELD']['18']['2nddose']['free']+=vaccinetemp['COVISHIELD']['18']['2nddose']["free"];
-                                    datetemp['vaccine']['COVISHIELD']['18']['2nddose']['paid']+=vaccinetemp['COVISHIELD']['18']['2nddose']["paid"];
+                            }else if(datetemp['vaccine'].hasOwnProperty(`${arr[0]}`)){
+                                if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(18) && vaccinetemp[`${arr[0]}`].hasOwnProperty(18)){
+                                    datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['free'];
+                                    datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['paid'];
+                                    datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['free'];
+                                    datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['paid'];
+                                }else if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(45) && vaccinetemp[`${arr[0]}`].hasOwnProperty(45)){
+                                    datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['free'];
+                                    datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['paid'];
+                                    datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['free'];
+                                    datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['paid'];
+                                }else{
+                                    let age=Object.getOwnPropertyNames(vaccinetemp[`${arr[0]}`]);
+                                    datetemp['vaccine'][`${arr[0]}`][`${age}`]=vaccinetemp[`${arr[0]}`][`${age}`];
                                 }
-                            }
-                        }else if(datetemp['vaccine'].hasOwnProperty(`${arr[0]}`)){
-                            if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(18) && vaccinetemp[`${arr[0]}`].hasOwnProperty(18)){
-                                datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['paid'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['paid'];
-                            }else if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(45) && vaccinetemp[`${arr[0]}`].hasOwnProperty(45)){
-                                datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['paid'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['paid'];
                             }else{
-                                let age=Object.getOwnPropertyNames(vaccinetemp[`${arr[0]}`]);
-                                datetemp['vaccine'][`${arr[0]}`][`${age}`]=vaccinetemp[`${arr[0]}`][`${age}`];
+                                datetemp['vaccine'][`${arr[0]}`]=vaccinetemp[`${arr[0]}`];
                             }
-                        }else{
-                            datetemp['vaccine'][`${arr[0]}`]=vaccinetemp[`${arr[0]}`];
-                        }
-                    }else if(datetemp['vaccine'].hasOwnProperty('COVAXIN')){
-                        let arr=Object.getOwnPropertyNames(vaccinetemp);
-                        if(vaccinetemp.hasOwnProperty('COVAXIN')){
-                            if(datetemp['vaccine']['COVAXIN'].hasOwnProperty(18)){
-                                if(vaccinetemp['COVAXIN'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['COVAXIN']['18']['1stdose']['free']+=vaccinetemp['COVAXIN']['18']['1stdose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['18']['1stdose']['paid']+=vaccinetemp['COVAXIN']['18']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVAXIN']['18']['2nddose']['free']+=vaccinetemp['COVAXIN']['18']['2nddose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['18']['2nddose']['paid']+=vaccinetemp['COVAXIN']['18']['2nddose']["paid"];
-                                }else if(!datetemp['vaccine']['COVAXIN'].hasOwnProperty(45) && vaccinetemp['COVAXIN'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['COVAXIN']['45']=vaccinetemp['COVAXIN']['45'];
-                                }else if(datetemp['vaccine']['COVAXIN'].hasOwnProperty(45) && vaccinetemp['COVAXIN'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['COVAXIN']['45']['1stdose']['free']+=vaccinetemp['COVAXIN']['45']['1stdose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['45']['1stdose']['paid']+=vaccinetemp['COVAXIN']['45']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVAXIN']['45']['2nddose']['free']+=vaccinetemp['COVAXIN']['45']['2nddose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['45']['2nddose']['paid']+=vaccinetemp['COVAXIN']['45']['2nddose']["paid"]; 
-                                }
-                            }else if(datetemp['vaccine']['COVAXIN'].hasOwnProperty(45)){
-                                if(vaccinetemp['COVAXIN'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['COVAXIN']['45']['1stdose']['free']+=vaccinetemp['COVAXIN']['45']['1stdose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['45']['1stdose']['paid']+=vaccinetemp['COVAXIN']['45']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVAXIN']['45']['2nddose']['free']+=vaccinetemp['COVAXIN']['45']['2nddose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['45']['2nddose']['paid']+=vaccinetemp['COVAXIN']['45']['2nddose']["paid"]; 
-                                }else if(!datetemp['vaccine']['COVAXIN'].hasOwnProperty(18) && vaccinetemp['COVAXIN'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['COVAXIN']['18']=vaccinetemp['COVAXIN']['18'];
-                                }else if(datetemp['vaccine']['COVAXIN'].hasOwnProperty(18) && vaccinetemp['COVAXIN'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['COVAXIN']['18']['1stdose']['free']+=vaccinetemp['COVAXIN']['18']['1stdose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['18']['1stdose']['paid']+=vaccinetemp['COVAXIN']['18']['1stdose']["paid"];
-                                    datetemp['vaccine']['COVAXIN']['18']['2nddose']['free']+=vaccinetemp['COVAXIN']['18']['2nddose']["free"];
-                                    datetemp['vaccine']['COVAXIN']['18']['2nddose']['paid']+=vaccinetemp['COVAXIN']['18']['2nddose']["paid"];
-                                }
-                            } 
-                        }else if(datetemp['vaccine'].hasOwnProperty(`${arr[0]}`)){
-                            if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(18) && vaccinetemp[`${arr[0]}`].hasOwnProperty(18)){
-                                datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['paid'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['paid'];
-                            }else if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(45) && vaccinetemp[`${arr[0]}`].hasOwnProperty(45)){
-                                datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['paid'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['paid'];
-                            }else{
-                                let age=Object.getOwnPropertyNames(vaccinetemp[`${arr[0]}`]);
-                                datetemp['vaccine'][`${arr[0]}`][`${age}`]=vaccinetemp[`${arr[0]}`][`${age}`];
-                            }
-                        }else{
-                            datetemp['vaccine'][`${arr[0]}`]=vaccinetemp[`${arr[0]}`];
-                        }
-                    }else if(datetemp['vaccine'].hasOwnProperty('SPUTNIK')){
-                        let arr=Object.getOwnPropertyNames(vaccinetemp);
-                        if(vaccinetemp.hasOwnProperty('SPUTNIK')){
-                            if(datetemp['vaccine']['SPUTNIK'].hasOwnProperty(18)){
-                                if(vaccinetemp['SPUTNIK'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['SPUTNIK']['18']['1stdose']['free']+=vaccinetemp['SPUTNIK']['18']['1stdose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['18']['1stdose']['paid']+=vaccinetemp['SPUTNIK']['18']['1stdose']["paid"];
-                                    datetemp['vaccine']['SPUTNIK']['18']['2nddose']['free']+=vaccinetemp['SPUTNIK']['18']['2nddose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['18']['2nddose']['paid']+=vaccinetemp['SPUTNIK']['18']['2nddose']["paid"];
-                                }else if(!datetemp['vaccine']['SPUTNIK'].hasOwnProperty(45) && vaccinetemp['SPUTNIK'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['SPUTNIK']['45']=vaccinetemp['SPUTNIK']['45'];
-                                }else if(datetemp['vaccine']['SPUTNIK'].hasOwnProperty(45) && vaccinetemp['SPUTNIK'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['SPUTNIK']['45']['1stdose']['free']+=vaccinetemp['SPUTNIK']['45']['1stdose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['45']['1stdose']['paid']+=vaccinetemp['SPUTNIK']['45']['1stdose']["paid"];
-                                    datetemp['vaccine']['SPUTNIK']['45']['2nddose']['free']+=vaccinetemp['SPUTNIK']['45']['2nddose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['45']['2nddose']['paid']+=vaccinetemp['SPUTNIK']['45']['2nddose']["paid"]; 
-                                }
-                            }else if(datetemp['vaccine']['SPUTNIK'].hasOwnProperty(45)){
-                                if(vaccinetemp['SPUTNIK'].hasOwnProperty(45)){
-                                    datetemp['vaccine']['SPUTNIK']['45']['1stdose']['free']+=vaccinetemp['SPUTNIK']['45']['1stdose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['45']['1stdose']['paid']+=vaccinetemp['SPUTNIK']['45']['1stdose']["paid"];
-                                    datetemp['vaccine']['SPUTNIK']['45']['2nddose']['free']+=vaccinetemp['SPUTNIK']['45']['2nddose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['45']['2nddose']['paid']+=vaccinetemp['SPUTNIK']['45']['2nddose']["paid"]; 
-                                }else if(!datetemp['vaccine']['SPUTNIK'].hasOwnProperty(18) && vaccinetemp['SPUTNIK'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['SPUTNIK']['18']=vaccinetemp['SPUTNIK']['18'];
-                                }else if(datetemp['vaccine']['SPUTNIK'].hasOwnProperty(18) && vaccinetemp['SPUTNIK'].hasOwnProperty(18)){
-                                    datetemp['vaccine']['SPUTNIK']['18']['1stdose']['free']+=vaccinetemp['SPUTNIK']['18']['1stdose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['18']['1stdose']['paid']+=vaccinetemp['SPUTNIK']['18']['1stdose']["paid"];
-                                    datetemp['vaccine']['SPUTNIK']['18']['2nddose']['free']+=vaccinetemp['SPUTNIK']['18']['2nddose']["free"];
-                                    datetemp['vaccine']['SPUTNIK']['18']['2nddose']['paid']+=vaccinetemp['SPUTNIK']['18']['2nddose']["paid"];
-                                }
-                            }  
-                        }else if(datetemp['vaccine'].hasOwnProperty(`${arr[0]}`)){
-                            if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(18) && vaccinetemp[`${arr[0]}`].hasOwnProperty(18)){
-                                datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['1stdose']['paid'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['18']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['18']['2nddose']['paid'];
-                            }else if(datetemp['vaccine'][`${arr[0]}`].hasOwnProperty(45) && vaccinetemp[`${arr[0]}`].hasOwnProperty(45)){
-                                datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['free']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['1stdose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['1stdose']['paid'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['free']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['free'];
-                                datetemp['vaccine'][`${arr[0]}`]['45']['2nddose']['paid']+=vaccinetemp[`${arr[0]}`]['45']['2nddose']['paid'];
-                            }else{
-                                let age=Object.getOwnPropertyNames(vaccinetemp[`${arr[0]}`]);
-                                datetemp['vaccine'][`${arr[0]}`][`${age}`]=vaccinetemp[`${arr[0]}`][`${age}`];
-                            }
-                        }else{
-                            datetemp['vaccine'][`${arr[0]}`]=vaccinetemp[`${arr[0]}`];
+
                         }
                     }
                 }else{
