@@ -51,6 +51,7 @@ $(window).bind('popstate',function(){
     let date=params.get('date');
     let PinSearch1=(pin ? true: false);
     if(params.has('y')){
+        Button.clearFilters();
         let res=document.getElementById('dateResults');
         if(res){
             res.innerHTML='';
@@ -181,6 +182,7 @@ $(window).bind('popstate',function(){
             }
         }
     }else{
+        Button.clearFilters();
         if(results.GetCopy()){
             plotData(4,date);
             removePreload();
@@ -208,6 +210,10 @@ $(window).on('load',()=>{
     });
     $(document).on('click','#DistrictSubmit0',function(event){
         event.preventDefault();
+        let params=new URLSearchParams(window.location.search);
+        if(params.has('n')){
+            Button.clearFilters();
+        }
         formSubmit(0,2);
     });
     $(document).on('click','#PinButton1',function(event){
@@ -216,6 +222,10 @@ $(window).on('load',()=>{
     });
     $(document).on('click','#PinButton0',function(event){
         event.preventDefault();
+        let params=new URLSearchParams(window.location.search);
+        if(params.has('n')){
+            Button.clearFilters();
+        }
         PinSearch(0);
     });
     $('#Retry').on('click',()=>{
@@ -1179,6 +1189,17 @@ var Button=(function (){
         },
         filterList: ()=>{
             return ['covishield','covaxin','sputnik v','1stDose','2ndDose','18+','45+','free','paid'];
+        },
+        clearFilters: ()=>{
+            covishield= false;
+            covaxin = false;
+            sputnik= false;
+            firstDose= false;
+            secondDose= false;
+            eighteen=false;
+            fourtyfive=false;
+            free= false;
+            paid= false;
         }
     }
 })();
