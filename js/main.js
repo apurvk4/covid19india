@@ -1754,10 +1754,15 @@ function plotData(type,date){
                     }
             }
             let pageStart=1;
-            let PageEnd=NumberOfPages;
-            if(NumberOfPages > 5 && currentPageNumber > 5){
-                pageStart=5*Math.floor(currentPageNumber/5.0);
-                PageEnd=5*Math.ceil(currentPageNumber/5.0);
+            let PageEnd=NumberOfPages+1;
+            if(NumberOfPages > 5 ){
+                if(currentPageNumber > 5 ){
+                    pageStart=5*Math.floor(currentPageNumber/5.0);
+                    PageEnd=pageStart+5;
+                }else{
+                    pageStart=1;
+                    PageEnd=6;
+                }
             }
             let s=`<nav aria-label="Vaccination Centers Page navigation">
             <ul id="PageNavUl" class="pagination justify-content-center">
@@ -1766,10 +1771,12 @@ function plotData(type,date){
                     <span aria-hidden="true">&laquo;</span>
                 </a>
                 </li>`;
-            for(let i=pageStart;i<=PageEnd;i++){
+            for(let i=pageStart;i<PageEnd;i++){
                     s+=`<li class="page-item"><a id="pagination1" class="page-link ${(currentPageNumber==i ? "bg-color text-dark" : "bg-secondary text-white")} " href="javascript:changePage(${i})">${i}</a></li>`;
             }
             s+=`<li class="page-item" id="NextPage"><a id="NextA" class="page-link text-white bg-secondary" href="javascript:nextPage(-2)" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li></ul></nav>`;
+            div.innerHTML+=s;
+            s=`<div class=" d-flex justify-content-center text-dark">Showing Page Number ${currentPageNumber} of Total ${NumberOfPages} Pages</div>`;
             div.innerHTML+=s;
             },
         TotalPages: function(){
