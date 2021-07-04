@@ -1759,6 +1759,9 @@ function plotData(type,date){
                 if(currentPageNumber > 5 ){
                     pageStart=5*Math.floor(currentPageNumber/5.0);
                     PageEnd=pageStart+5;
+                    if(PageEnd >= NumberOfPages){
+                        PageEnd=NumberOfPages+1;
+                    }
                 }else{
                     pageStart=1;
                     PageEnd=6;
