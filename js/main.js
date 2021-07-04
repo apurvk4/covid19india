@@ -196,9 +196,12 @@ $(window).bind('popstate',function(){
     }
 })
 $(window).on('load',()=>{
-    $(document).on("click","#agefilter,#vaccinefilter,#feefilter,#dosefilter,#ad,#dateShift,#gobackanchor,#PinButton0,#DistrictSubmit0" , function(){
+    $(document).on("click","#agefilter,#PageNavUl,#vaccinefilter,#feefilter,#dosefilter,#ad,#dateShift,#gobackanchor,#PinButton0,#DistrictSubmit0" , function(){
         $('[data-toggle="popover"]').popover('hide');
         $('#ad').popover('dispose');
+        if(!sessionStorage.getItem('popover')){
+            sessionStorage.setItem('popover','y');
+        }
     });
     $(document).on("click", "#closePopover" , function(){
         $('[data-toggle="popover"]').popover('hide');
@@ -930,6 +933,7 @@ function changeData(copy){
 var results=(function (){
     let actualData=null;
     let gotresult=false;
+    let currentFilteredData=null;
     return {
         gotresponse: function(){
             return gotresult;
@@ -1024,10 +1028,17 @@ var results=(function (){
         },
         filterData : function (){
             let copy=JSON.parse(JSON.stringify(actualData));
-            return changeData(copy);
+            currentFilteredData=changeData(copy);
+            return currentFilteredData;
         },
         GetCopy: function (){
             return JSON.parse(JSON.stringify(actualData));
+        },
+        getCurrentFilteredData : function (){
+            if(!currentFilteredData){
+                this.filterData();
+            }
+            return currentFilteredData;
         }
     }
 })();
@@ -1161,6 +1172,7 @@ var Button=(function (){
                     }else if(params.has('n')){
                         if(params.has('date')){
                             let date=params.get('date');
+                            showData.clear();
                             plotData(4,date);
                         }
                     }
@@ -1608,68 +1620,172 @@ function plotData(type,date){
             }
             // history.replaceState: change the provided date to date at index 0.
          }
-         let div=document.getElementById('hospitalResults');
-         if(div){
-             let div1=document.getElementById('currentdate');
-             div1.innerHTML=`${date}`;
-             div.innerHTML='';
-             if(usefulData['date'][index]['Hospital'].length==0){
-                 if(Button.isClicked('18+') || Button.isClicked('45+') || Button.isClicked('covishield') || Button.isClicked('covaxin') || Button.isClicked('sputnik') || Button.isClicked('free') || Button.isClicked('paid') || Button.isClicked('1stDose') || Button.isClicked('2ndDose')){
-                     div.innerHTML+=alert('No Data of Vaccination centers available for current set of filters.');
-                 }else{
-                     div.innerHTML+=alert('No Data of Vaccination centers available');
-                 }
-                 return;
-             }
-             div.innerHTML+=`<div class="d-flex p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
-             div=document.getElementById('HospitalRes');
-             div.innerHTML='';
-             div.innerHTML+=`<div class="card " data-toggle="popover" id="ad" onclick="DelegateClick(0)"><div class="d-flex card-header ${(usefulData['date'][index]['Hospital'][0]['1stdose'] > 0 || usefulData['date'][index]['Hospital'][0]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital0" ><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName0" type="button" data-toggle="collapse" data-target="#Hospitaldetails0" aria-expanded="false" aria-controls="Hospitaldetails0">${usefulData['date'][index]['Hospital'][0]['name']}</button></h2></div><div id="Hospitaldetails0" class="collapse" aria-labelledby="Hospital0" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${usefulData['date'][index]['Hospital'][0]['address']}<p>${addBadges(usefulData['date'][index]['Hospital'],0)}</p><ul class="list-group"><li class="list-group-item ${(usefulData['date'][index]['Hospital'][0]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${usefulData['date'][index]['Hospital'][0]['1stdose']}</li><li class="list-group-item ${(usefulData['date'][index]['Hospital'][0]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${usefulData['date'][index]['Hospital'][0]['2nddose']}</li></ul></div></div></div>`;
-             for(let i=1;i<usefulData['date'][index]['Hospital'].length;i++){
-                 div.innerHTML+=`<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${(usefulData['date'][index]['Hospital'][i]['1stdose'] > 0 || usefulData['date'][index]['Hospital'][i]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital${i}" ><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName${i}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${i}" aria-expanded="false" aria-controls="Hospitaldetails${i}">${usefulData['date'][index]['Hospital'][i]['name']}</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${usefulData['date'][index]['Hospital'][i]['address']}<p>${addBadges(usefulData['date'][index]['Hospital'],i)}</p><ul class="list-group"><li class="list-group-item ${(usefulData['date'][index]['Hospital'][i]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${usefulData['date'][index]['Hospital'][i]['1stdose']}</li><li class="list-group-item ${(usefulData['date'][index]['Hospital'][i]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${usefulData['date'][index]['Hospital'][i]['2nddose']}</li></ul></div></div></div>`;
-             }
-            //  $('[data-toggle="popover"]').popover({
-            //     placement : 'top',
-            //     html : true,
-            //     content : '<a href="javascript:" id="closePopover" class="close btn"data-dismiss="alert">&times;</a><div class="media-body">click here to get more information about this vaccination center</div>'
-            // });
-            // $('[data-toggle="popover"]').popover('show');
-         }else{
-             let div=document.getElementById('MainContent');
-             div.innerHTML='';
-             if(usefulData['date'][index]['Hospital'].length==0){
-                 div.innerHTML+=`<div class="d-flex justify-content-start"><div class="p-2"><a href="javascript:GoBackToDateResults()" title="go back" class="btn active" id="gobackanchor"><img src="img/arrow-left.svg" alt="go back"></a></div></div>`;
-                 if(Button.isClicked('18+') || Button.isClicked('45+') || Button.isClicked('covishield') || Button.isClicked('covaxin') || Button.isClicked('sputnik') || Button.isClicked('free') || Button.isClicked('paid') || Button.isClicked('1stDose') || Button.isClicked('2ndDose')){
-                     div.innerHTML+=alert('No Data of Vaccination centers available for current set of filters.');
-                 }else{
-                     div.innerHTML+=alert('No Data of Vaccination centers available');
-                 }
-                 return;
-             }
-            //  div.innerHTML+=`<div class="d-flex justify-content-start"><div class="p-2"><a href="javascript:GoBackToDateResults()" title="go back" class="btn active" id="gobackanchor"><img src="img/arrow-left.svg" alt="go back"></a></div></div>`;
-             div.innerHTML+=`<div class="d-flex justify-content-between" id="dateShift">
-                             <div class="p-2"><a href="javascript:Previousdate()" title="goto previous date" id="previousdateanchor" class="btn active"><img src="img/arrow-left.svg" alt="goto previous date" id="dateshiftleft"></a></div><div class="p-2 font-weight-bold" title="current date" id="currentdate">${usefulData['date'][index]['value']}</div><div class="p-2"><a href="javascript:Nextdate()" title="goto next date" id="nextdateanchor" class="btn active"><img src="img/arrow-right.svg" alt="goto next date" id="dateshiftright"></a></div></div>`;
-     
-             addFilterButtons(div);
-             div.innerHTML+=`<div id="hospitalResults"></div>`;
-             div=document.getElementById('hospitalResults');
-             div.innerHTML+=`<div class="d-flex p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
-             div=document.getElementById('HospitalRes');
-             div.innerHTML='';
-             div.innerHTML+=`<div class="card " id="ad" data-toggle="popover" onclick="DelegateClick(0)"><div class="d-flex card-header ${(usefulData['date'][index]['Hospital'][0]['1stdose'] > 0 || usefulData['date'][index]['Hospital'][0]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital0"><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName0" type="button" data-toggle="collapse" data-target="#Hospitaldetails0" aria-expanded="false" aria-controls="Hospitaldetails0">${usefulData['date'][index]['Hospital'][0]['name']}</button></h2></div><div id="Hospitaldetails0" class="collapse" aria-labelledby="Hospital0" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${usefulData['date'][index]['Hospital'][0]['address']}<p>${addBadges(usefulData['date'][index]['Hospital'],0)}</p><ul class="list-group"><li class="list-group-item ${(usefulData['date'][index]['Hospital'][0]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${usefulData['date'][index]['Hospital'][0]['1stdose']}</li><li class="list-group-item ${(usefulData['date'][index]['Hospital'][0]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${usefulData['date'][index]['Hospital'][0]['2nddose']}</li></ul></div></div></div>`;
-             for(let i=1;i<usefulData['date'][index]['Hospital'].length;i++){
-                 div.innerHTML+=`<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${(usefulData['date'][index]['Hospital'][i]['1stdose'] > 0 || usefulData['date'][index]['Hospital'][i]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital${i}"><h2 class="mb-0"><button class="btn collapsed" id="HospitalName${i}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${i}" aria-expanded="false" aria-controls="Hospitaldetails${i}">${usefulData['date'][index]['Hospital'][i]['name']}</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${usefulData['date'][index]['Hospital'][i]['address']}<p>${addBadges(usefulData['date'][index]['Hospital'],i)}</p><ul class="list-group"><li class="list-group-item ${(usefulData['date'][index]['Hospital'][i]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${usefulData['date'][index]['Hospital'][i]['1stdose']}</li><li class="list-group-item ${(usefulData['date'][index]['Hospital'][i]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${usefulData['date'][index]['Hospital'][i]['2nddose']}</li></ul></div></div></div>`;
-             }
-             $('[data-toggle="popover"]').popover({
+         showData.plot(usefulData['date'][index]['Hospital'],date,1);
+         if(!sessionStorage.getItem('popover')){
+             sessionStorage.setItem('popover','y');
+            $('[data-toggle="popover"]').popover({
                 placement : 'top',
                 html : true,
                 content : '<a href="javascript:" id="closePopover" class="close btn"data-dismiss="alert">&times;</a><div class="media-body">click here to get more information about this vaccination center</div>'
             });
             $('[data-toggle="popover"]').popover('show');
-        }
+         }
     }
  
  }
+ function previousPage(number){
+    if(showData.currentPage() == 1){
+        document.getElementById('PreviousPage').setAttribute('class','page-item disabled');
+        document.getElementById('NextPage').setAttribute('class','page-item');
+        return;
+    }
+    let params=new URLSearchParams(window.location.search);
+    let date=params.get('date');
+    let usefulData=results.getCurrentFilteredData();
+    let index=0;
+    for(let i=0;i<usefulData['date'].length;i++){
+        if(usefulData['date'][i]['value']==date){
+            index=i;
+            break;
+        }
+    }
+    if(number==-1){
+        showData.plot(usefulData['date'][index]['Hospital'],date,showData.currentPage()-1);
+    }else{
+        showData.plot(usefulData['date'][index]['Hospital'],date,number);
+    }
+ }
+ function nextPage(number){
+    if(showData.currentPage() == showData.TotalPages()){
+        document.getElementById('NextPage').setAttribute('class','page-item disabled');
+        document.getElementById('PreviousPage').setAttribute('class','page-item');
+        return;
+    }
+    let params=new URLSearchParams(window.location.search);
+    let date=params.get('date');
+    let usefulData=results.getCurrentFilteredData();
+    let index=0;
+    for(let i=0;i<usefulData['date'].length;i++){
+        if(usefulData['date'][i]['value']==date){
+            index=i;
+            break;
+        }
+    }
+    if(number==-2){
+        showData.plot(usefulData['date'][index]['Hospital'],params.get('date'),showData.currentPage()+1);
+    }else{
+        showData.plot(usefulData['date'][index]['Hospital'],params.get('date'),number);
+    }
+ }
+ function changePage(number){
+     if(showData.currentPage() > number){
+         previousPage(number);
+     }else if(showData.currentPage() < number){
+        nextPage(number);
+     }
+ }
+ var showData=(function(){
+    let totalLength=null;
+    let maxResultsToShow=10;
+    let NumberOfPages=null;
+    let currentDate=null;
+    let currentPageNumber=null;
+    return {
+        plot: function(data,date,pageNumber){
+                if(currentDate && currentDate != date){
+                    currentDate=null;
+                }
+                if(totalLength && totalLength != data.length){
+                    currentDate=null;
+                }
+                if(!currentDate){
+                    currentDate=date;
+                    totalLength=data.length;
+                    NumberOfPages=Math.ceil(totalLength/parseFloat(maxResultsToShow));
+                }
+                currentPageNumber=pageNumber;
+                let startIndex=(pageNumber-1)*maxResultsToShow;
+                let lastIndex=(startIndex+maxResultsToShow >= totalLength ? totalLength : startIndex+maxResultsToShow+1);
+                var div=document.getElementById('hospitalResults');
+                if(div){
+                    let div1=document.getElementById('currentdate');
+                    div1.innerHTML=`${date}`;
+                    div.innerHTML='';
+                    if(data.length==0){
+                        if(Button.isClicked('18+') || Button.isClicked('45+') || Button.isClicked('covishield') || Button.isClicked('covaxin') || Button.isClicked('sputnik') || Button.isClicked('free') || Button.isClicked('paid') || Button.isClicked('1stDose') || Button.isClicked('2ndDose')){
+                            div.innerHTML+=alert('No Data of Vaccination centers available for current set of filters.');
+                        }else{
+                            div.innerHTML+=alert('No Data of Vaccination centers available');
+                        }
+                        return;
+                    }
+                    div.innerHTML+=`<div class="d-flex p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
+                    div=document.getElementById('HospitalRes');
+                    div.innerHTML='';
+                    div.innerHTML+=`<div class="card " data-toggle="popover" id="ad" onclick="DelegateClick(${startIndex})"><div class="d-flex card-header ${(data[startIndex]['1stdose'] > 0 || data[startIndex]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital${startIndex}" ><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName${startIndex}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${startIndex}" aria-expanded="false" aria-controls="Hospitaldetails${startIndex}">${data[startIndex]['name']}</button></h2></div><div id="Hospitaldetails${startIndex}" class="collapse" aria-labelledby="Hospital${startIndex}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${data[startIndex]['address']}<p>${addBadges(data,startIndex)}</p><ul class="list-group"><li class="list-group-item ${(data[startIndex]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${data[startIndex]['1stdose']}</li><li class="list-group-item ${(data[startIndex]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${data[startIndex]['2nddose']}</li></ul></div></div></div>`;
+                    for(let i=startIndex+1;i<lastIndex;i++){
+                        div.innerHTML+=`<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${(data[i]['1stdose'] > 0 || data[i]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital${i}" ><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName${i}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${i}" aria-expanded="false" aria-controls="Hospitaldetails${i}">${data[i]['name']}</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${data[i]['address']}<p>${addBadges(data,i)}</p><ul class="list-group"><li class="list-group-item ${(data[i]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${data[i]['1stdose']}</li><li class="list-group-item ${(data[i]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${data[i]['2nddose']}</li></ul></div></div></div>`;
+                    }
+                }else{
+                    div=document.getElementById('MainContent');
+                    div.innerHTML='';
+                    if(data.length==0){
+                        div.innerHTML+=`<div class="d-flex justify-content-start"><div class="p-2"><a href="javascript:GoBackToDateResults()" title="go back" class="btn active" id="gobackanchor"><img src="img/arrow-left.svg" alt="go back"></a></div></div>`;
+                        if(Button.isClicked('18+') || Button.isClicked('45+') || Button.isClicked('covishield') || Button.isClicked('covaxin') || Button.isClicked('sputnik') || Button.isClicked('free') || Button.isClicked('paid') || Button.isClicked('1stDose') || Button.isClicked('2ndDose')){
+                            div.innerHTML+=alert('No Data of Vaccination centers available for current set of filters.');
+                        }else{
+                            div.innerHTML+=alert('No Data of Vaccination centers available');
+                        }
+                        return;
+                    }
+                //  div.innerHTML+=`<div class="d-flex justify-content-start"><div class="p-2"><a href="javascript:GoBackToDateResults()" title="go back" class="btn active" id="gobackanchor"><img src="img/arrow-left.svg" alt="go back"></a></div></div>`;
+                    div.innerHTML+=`<div class="d-flex justify-content-between" id="dateShift">
+                                    <div class="p-2"><a href="javascript:Previousdate()" title="goto previous date" id="previousdateanchor" class="btn active"><img src="img/arrow-left.svg" alt="goto previous date" id="dateshiftleft"></a></div><div class="p-2 font-weight-bold" title="current date" id="currentdate">${currentDate}</div><div class="p-2"><a href="javascript:Nextdate()" title="goto next date" id="nextdateanchor" class="btn active"><img src="img/arrow-right.svg" alt="goto next date" id="dateshiftright"></a></div></div>`;
+            
+                    addFilterButtons(div);
+                    div.innerHTML+=`<div id="hospitalResults"></div>`;
+                    div=document.getElementById('hospitalResults');
+                    div.innerHTML+=`<div class="d-flex p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
+                    div=document.getElementById('HospitalRes');
+                    div.innerHTML='';
+                    div.innerHTML+=`<div class="card " id="ad" data-toggle="popover" onclick="DelegateClick(${startIndex})"><div class="d-flex card-header ${(data[startIndex]['1stdose'] > 0 || data[startIndex]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital${startIndex}"><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName${startIndex}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${startIndex}" aria-expanded="false" aria-controls="Hospitaldetails${startIndex}">${data[startIndex]['name']}</button></h2></div><div id="Hospitaldetails${startIndex}" class="collapse" aria-labelledby="Hospital${startIndex}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${data[startIndex]['address']}<p>${addBadges(data,startIndex)}</p><ul class="list-group"><li class="list-group-item ${(data[startIndex]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${data[startIndex]['1stdose']}</li><li class="list-group-item ${(data[startIndex]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${data[startIndex]['2nddose']}</li></ul></div></div></div>`;
+                    for(let i=startIndex+1;i<lastIndex;i++){
+                        div.innerHTML+=`<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${(data[i]['1stdose'] > 0 || data[i]['2nddose'] > 0 ? 'btn-success' : 'btn-secondary')} align-items-center justify-content-center" id="Hospital${i}"><h2 class="mb-0"><button class="btn collapsed" id="HospitalName${i}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${i}" aria-expanded="false" aria-controls="Hospitaldetails${i}">${data[i]['name']}</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${data[i]['address']}<p>${addBadges(data,i)}</p><ul class="list-group"><li class="list-group-item ${(data[i]['1stdose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose1">${data[i]['1stdose']}</li><li class="list-group-item ${(data[i]['2nddose'] > 0 ? 'list-group-item-success':'list-group-item-secondary')}" id="dose2">${data[i]['2nddose']}</li></ul></div></div></div>`;
+                    }
+            }
+            let pageStart=1;
+            let PageEnd=NumberOfPages;
+            if(NumberOfPages > 5 && currentPageNumber > 5){
+                pageStart=5*Math.floor(currentPageNumber/5.0);
+                PageEnd=5*Math.ceil(currentPageNumber/5.0);
+            }
+            let s=`<nav aria-label="Vaccination Centers Page navigation">
+            <ul id="PageNavUl" class="pagination justify-content-center">
+                <li class="page-item" id="PreviousPage">
+                <a  id="PrevA" class="page-link text-white bg-secondary" href="javascript:previousPage(-1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+                </li>`;
+            for(let i=pageStart;i<=PageEnd;i++){
+                    s+=`<li class="page-item"><a id="pagination1" class="page-link ${(currentPageNumber==i ? "bg-color text-dark" : "bg-secondary text-white")} " href="javascript:changePage(${i})">${i}</a></li>`;
+            }
+            s+=`<li class="page-item" id="NextPage"><a id="NextA" class="page-link text-white bg-secondary" href="javascript:nextPage(-2)" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li></ul></nav>`;
+            div.innerHTML+=s;
+            },
+        TotalPages: function(){
+            return NumberOfPages;
+        },
+        currentPage : function(){
+            return currentPageNumber;
+        },
+        clear : function(){
+            totalLength=null;
+            NumberOfPages=null;
+            currentDate=null;
+            currentPageNumber=null;
+        }
+    }
+ })();
  function addFilterButtons(obj){
     if(typeof(obj) != "undefined"){
         obj.innerHTML+=`<div class="d-flex align-items-center justify-content-center" id="filters">
