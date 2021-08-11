@@ -2158,6 +2158,7 @@ var showData = (function () {
         div.innerHTML += `<div class="d-flex justify-content-between" id="dateShift">
                                     <div class="p-2"><a href="javascript:Previousdate()" title="goto previous date" id="previousdateanchor" class="btn active"><img src="img/arrow-left.svg" alt="goto previous date" id="dateshiftleft"></a></div><div class="p-2 font-weight-bold" title="current date" id="currentdate">${currentDate}</div><div class="p-2"><a href="javascript:Nextdate()" title="goto next date" id="nextdateanchor" class="btn active"><img src="img/arrow-right.svg" alt="goto next date" id="dateshiftright"></a></div></div>`;
 
+
         addFilterButtons(div);
         div.innerHTML += `<div id="hospitalResults"></div>`;
         div = document.getElementById("hospitalResults");
@@ -2206,7 +2207,7 @@ var showData = (function () {
               : "list-group-item-secondary"
           }" id="dose1">${data[i]["1stdose"]}</li><li class="list-group-item ${
             data[i]["2nddose"] > 0
-              ? "list-group-item-success"
+              ? "list-group-item-success";
               : "list-group-item-secondary"
           }" id="dose2">${data[i]["2nddose"]}</li></ul></div></div></div>`;
         }
@@ -2226,6 +2227,7 @@ var showData = (function () {
         }
       }
       let s = `<nav aria-label="Vaccination Centers Page navigation">
+
             <ul id="PageNavUl" class="pagination justify-content-center">
                 <li class="page-item" id="PreviousPage">
                 <a  id="PrevA" class="page-link text-white bg-secondary" href="javascript:previousPage(-1)" aria-label="Previous">
