@@ -1,0 +1,125 @@
+html{
+    font-size: 1rem;
+    scroll-behavior:smooth;
+    }
+    a:hover,.btn:hover,.dropdown-item:hover,.page-link.pagination1:hover{
+        text-decoration: none;
+        color: #192965 !important;
+    }
+    bg-color{
+        background-color: #bbcfff;
+    }
+    #PreLoad{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #bbcfff;
+    }
+    body{
+        background-color: #bbcfff !important; /*#28a745- btn-success main body color scheme*/
+    }
+    .zoom-in-zoom-out {
+      margin: 24px;
+      animation: zoom-in-zoom-out 2s ease-out infinite;
+    }
+
+ @keyframes zoom-in-zoom-out {
+    0% {
+        transform: scale(1, 1);
+    }
+    50% {
+        transform: scale(1.5, 1.5);
+    }
+    100% {
+        transform: scale(1, 1);
+    }
+}
+    #mynavbartop,.nav-item.dropdown .dropdown-menu,#pininput0,#state0,#district0{  /*navbar and dropdown menu color scheme*/
+        background-color: #192965;
+    }
+    .Button-clicked{  /*button press color change*/
+        background-color: #f0efef; 
+    }
+    @media screen and (max-width: 349px) {   /* 0 to 349 px small to very mobile */
+        #req{
+            height:fit-content; 
+            width: 299px;
+        }
+        #NoDataAlert{
+            width:299px;
+            height: fit-content;
+        }
+        #HospitalRes,#dateResults{
+            width:fit-content;
+            word-wrap: break-word;
+            overflow: scroll;
+        }
+    }
+    @media screen and (min-width: 350px) {   /* 350 to 449 px normal mobile */
+        #req{
+            height:fit-content; 
+            width: 300px;
+        }
+        #NoDataAlert{
+            width:300px;
+            height: fit-content;
+        }
+        #HospitalRes{
+            width: 313px;
+        }
+    }
+    @media screen and (min-width: 450px) {  /* 450px to 767px ipad and tablets */
+        #req{
+            height:fit-content; 
+            width: 400px;
+        }
+        #NoDataAlert{
+            width:400px;
+            height: fit-content;
+        }
+        #HospitalRes{
+            width: 678px;
+        }
+        #HospitalRes,#dateResults{
+            width: 400px;
+            word-wrap: break-word;
+        }
+    }
+    @media screen and (min-width: 768px) { /* 768+ laptops*/
+        #req{
+            width: 700px; 
+            height: 150px;
+        }
+        #NoDataAlert{
+            width: 700px;
+            height: fit-content;
+        }
+        #HospitalRes,#dateResults{
+            width: 700px;
+            word-wrap: break-word;
+        }
+    }
+    #HospitalAddress::before{
+        content: "   Address: ";
+    }
+    #dose1::before{
+        content: "Available Capacity dose1 : ";
+    }
+    #dose2::before{
+        content: "Available Capacity dose2 : ";
+    }
+    h5{
+        white-space: wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .badge.badge-info{
+        padding-left: 2.8px !important;
+        padding-right: 2.8px !important;
+        padding-top: 1.5px !important;
+        padding-bottom: 1.5px !important;
+    }
