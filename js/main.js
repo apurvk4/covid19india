@@ -271,6 +271,7 @@ function removePreload() {
   $("#PreLoad").css("display", "none");
   $("#mynavbartop,#scroll,#h1,#info,#MainContent").css("display", "");
   $("body").css("overflow", "auto");
+  $("#footer").css("display", "block");
   PreLoadActive = false;
   let d = document.getElementById("hospitalResults");
   if (d) {
@@ -288,29 +289,16 @@ function removePreload() {
   document.getElementById("agefilter").addEventListener("mouseenter", (e) => {
     e.target.click();
   });
-  document.getElementById("agefilter").addEventListener("mouseleave", (e) => {
-    e.target.click();
-  });
   document
     .getElementById("vaccinefilter")
     .addEventListener("mouseenter", (e) => {
       e.target.click();
     });
-  document
-    .getElementById("vaccinefilter")
-    .addEventListener("mouseleave", (e) => {
-      e.target.click();
-    });
+
   document.getElementById("feefilter").addEventListener("mouseenter", (e) => {
     e.target.click();
   });
-  document.getElementById("feefilter").addEventListener("mouseleave", (e) => {
-    e.target.click();
-  });
   document.getElementById("dosefilter").addEventListener("mouseenter", (e) => {
-    e.target.click();
-  });
-  document.getElementById("dosefilter").addEventListener("mouseleave", (e) => {
     e.target.click();
   });
 }
@@ -318,7 +306,10 @@ function addPreLoad() {
   PreLoadActive = true;
   $("#PreLoad").addClass("d-flex justify-content-center align-items-center ");
   $("#PreLoad").css("display", "block");
-  $("#mynavbartop,#scroll,#h1,#info,#MainContent").css("display", "none");
+  $("#mynavbartop,#scroll,#h1,#info,#MainContent,#footer").css(
+    "display",
+    "none"
+  );
   $("body").css("overflow", "hidden");
 }
 // array[0:{state_id: number,state_name: string}, ...];
