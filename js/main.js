@@ -20,9 +20,9 @@ function PinSearch(type, cb) {
   }
   if (!validatePin(val)) {
     form.innerHTML = `<label>Pincode</label>
-        <input class="form-control mr-sm-2 bg-white text-black is-invalid" id="pininput${type}" type="pincode" placeholder="Pincode" value="${val}" aria-label="pincode" oninput="PinValid(${type})">
-        <div class="invalid-feedback" id="invalid-feedback" style="font-size: medium;!important border:thick">Invalid pinCode! Please enter valid Pincode.</div>
-        <button class="btn btn-success my-2 my-sm-0 "  id="PinButton" type="submit">Search</button>`;
+          <input class="form-control mr-sm-2 bg-white text-black is-invalid" id="pininput${type}" type="pincode" placeholder="Pincode" value="${val}" aria-label="pincode" oninput="PinValid(${type})">
+          <div class="invalid-feedback" id="invalid-feedback" style="font-size: medium;!important border:thick">Invalid pinCode! Please enter valid Pincode.</div>
+          <button class="btn btn-success my-2 my-sm-0 "  id="PinButton" type="submit">Search</button>`;
     if (PreLoadActive) {
       removePreload();
     }
@@ -33,17 +33,21 @@ function PinSearch(type, cb) {
     history.pushState({}, "", `${window.location.pathname}?pin=${val}&y`); //y=dateSearch
     let div = document.getElementById("dateResults");
     results.getData(type, 3, () => {
-      plotData(3);
+      plotData(3, undefined, true);
+      document.getElementById("filters").classList += " col-12";
       cb();
     });
     let newtitle = `${val} Available Slots`;
     document.title = newtitle;
-    div.innerHTML = "";
-    div.innerHTML += `<div class="d-flex justify-content-center">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>`;
+    if (div) {
+      div.innerHTML = "";
+      div.innerHTML += `<div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>`;
+    }
+    removePopOver();
   }
 }
 $(window).bind("popstate", function () {
@@ -147,48 +151,14 @@ $(window).bind("popstate", function () {
         }
       }
     } else {
-      $('[data-toggle="popover"]').popover("hide");
-      $("#ad").popover("dispose");
+      removePopOver();
       let d = document.getElementById("MainContent");
       d.innerHTML = "";
-      d.innerHTML = `<div class="container h-100" id="start">
-                    <div class=" d-flex justify-content-center align-items-center">
-                                <a href="javascript:" >
-                                <button class="btn Button-clicked" id="flexDistrict" onclick="SwithToDistrict()">District</button>
-                                </a>
-                                <a href="javascript:" >
-                                <button class="btn btn-secondary" id="flexPincode" onclick="SwithToPin()">Pincode</button>
-                                </a>
-                    </div>
-                    <div class="d-flex h-100 justify-content-center align-items-center" id="BeforeStateToPin">
-                        <form class="form-group " id="StateToPin1">
-                            <div class="form-group " id="0statechange">
-                            <label for="state">State</label>
-                            <select class="form-control" id="state1" onchange="stateSelected(this.value,1)">
-                            </select>
-                            </div>
-                            <div class="form-group" id="mydiv1">
-                            <label for="District">District</label>
-                            <select class="form-control" id="district1">
-                            </select>
-                            </div>
-                            <div class="form-group col-sm-4">
-                            <button class="btn btn-success my-2 my-sm-0" type="submit" id="DistrictSubmit1" >Search</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="container h-100">
-                    <div class="d-flex h-100 align-items-center justify-content-center">
-                        <div class="font-weight-bold">Filters</div>
-                    </div>
-                </div>
-                ${addFilterButtons()}
-                </br>
-                <div id="res">
-                <div id="dateResults" class="container h-100">
-                </div>
-                </div>`;
+      d.innerHTML = `
+      ${addFilterButtons()}
+      <div id="res" class="col-12 my-3">
+      <div id="dateResults" class="container h-100"></div>
+      </div>`;
       if (!PinSearch1) {
         loadStates(1, s_id);
         loadDistricts(1, d_id);
@@ -199,6 +169,7 @@ $(window).bind("popstate", function () {
         input.value = pin;
         PinSearch(1, removePreload);
       }
+      document.getElementById("filters").classList += " col-12";
     }
   } else {
     Button.clearFilters();
@@ -225,16 +196,11 @@ $(window).on("load", () => {
     "click",
     "#agefilter,#PageNavUl,#vaccinefilter,#feefilter,#dosefilter,#ad,#dateShift,#gobackanchor,#PinButton0,#DistrictSubmit0",
     function () {
-      $('[data-toggle="popover"]').popover("hide");
-      $("#ad").popover("dispose");
-      if (!sessionStorage.getItem("popover")) {
-        sessionStorage.setItem("popover", "y");
-      }
+      removePopOver();
     }
   );
   $(document).on("click", "#closePopover", function () {
-    $('[data-toggle="popover"]').popover("hide");
-    $("#ad").popover("dispose");
+    removePopOver();
   });
   $(document).on("click", "#DistrictSubmit1", function (event) {
     event.preventDefault();
@@ -273,34 +239,6 @@ function removePreload() {
   $("body").css("overflow", "auto");
   $("#footer").css("display", "block");
   PreLoadActive = false;
-  let d = document.getElementById("hospitalResults");
-  if (d) {
-    d.addEventListener(
-      "mouseover",
-      (e) => {
-        if (e.target.id.includes("Hospital") && e.target.id != "HospitalRes") {
-          e.target.click();
-          //   document.getElementById("agefilter").click();
-        }
-      },
-      false
-    );
-  }
-  document.getElementById("agefilter").addEventListener("mouseenter", (e) => {
-    e.target.click();
-  });
-  document
-    .getElementById("vaccinefilter")
-    .addEventListener("mouseenter", (e) => {
-      e.target.click();
-    });
-
-  document.getElementById("feefilter").addEventListener("mouseenter", (e) => {
-    e.target.click();
-  });
-  document.getElementById("dosefilter").addEventListener("mouseenter", (e) => {
-    e.target.click();
-  });
 }
 function addPreLoad() {
   PreLoadActive = true;
@@ -446,11 +384,13 @@ function querySearch() {
             true,
             d_id
           );
+          loadDistricts(1, d_id);
           loadDistricts(0, d_id);
           let d_name = districts.GetName(d_id);
           newtitle = `Vaccination Centers in ${d_name} on ${date}`;
           document.title = newtitle;
         });
+        loadStates(1, s_id);
         loadStates(0, s_id);
       });
     }
@@ -523,9 +463,9 @@ function SwithToPin() {
       form.removeChild(form.firstChild);
     }
     form.innerHTML = `
-        <label>Pincode</label>
-        <input class="form-control mr-sm-2 bg-white text-black" id="pininput1" type="pincode" placeholder="Pincode" aria-label="pincode" oninput="PinValid(1)"></br>
-        <button class="btn btn-success my-2 my-sm-0" type="submit" id="PinButton1">Search</button>`;
+          <label>Pincode</label>
+          <input class="form-control mr-sm-2 text-white" id="pininput1" type="pincode" placeholder="Pincode" aria-label="pincode" oninput="PinValid(1)"></br>
+          <button class="btn btn-success my-2 my-sm-0" type="submit" id="PinButton1">Search</button>`;
     let div = document.getElementById("dateResults");
     if (div) {
       div.innerHTML = "";
@@ -543,18 +483,18 @@ function SwithToDistrict() {
       form.removeChild(form.firstChild);
     }
     form.innerHTML = `<div class="form-group " id="0statechange">
-        <label for="state">State</label>
-        <select class="form-control" id="state1" onchange="stateSelected(this.value,1)">
-        </select>
-        </div>
-        <div class="form-group" id="mydiv1">
-        <label for="District">District</label>
-        <select class="form-control" id="district1">
-        </select>
-        </div>
-        <div class="form-group col-sm-4">
-        <button class="btn btn-success my-2 my-sm-0" type="submit" id="DistrictSubmit1" >Search</button>
-        </div>`;
+          <label for="state">State</label>
+          <select class="form-control" id="state1" onchange="stateSelected(this.value,1)">
+          </select>
+          </div>
+          <div class="form-group" id="mydiv1">
+          <label for="District">District</label>
+          <select class="form-control" id="district1">
+          </select>
+          </div>
+          <div class="form-group col-sm-4">
+          <button class="btn btn-success my-2 my-sm-0" type="submit" id="DistrictSubmit1" >Search</button>
+          </div>`;
     if (typeof states != "undefined" && typeof districts != "undefined") {
       loadStates(1, sessionStorage.getItem("currentState"));
       loadDistricts(1);
@@ -727,8 +667,8 @@ function loadDistricts(type, val) {
 }
 function alert(text) {
   return `<div class="d-flex align-items-center justify-content-center">
-    <div class="alert alert-danger" role="alert" id="NoDataAlert">${text}</div>
-    </div>`;
+      <div class="alert alert-danger" role="alert" id="NoDataAlert">${text}</div>
+      </div>`;
 }
 function changeData(copy) {
   if (
@@ -763,16 +703,24 @@ function changeData(copy) {
         for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
           let l = copy["date"][i]["Hospital"].length - 1;
           if (copy["date"][i]["Hospital"][j]["vaccine"] == "COVAXIN") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
               j--;
             }
           } else if (copy["date"][i]["Hospital"][j]["vaccine"] == "SPUTNIK V") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
@@ -800,16 +748,24 @@ function changeData(copy) {
         for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
           let l = copy["date"][i]["Hospital"].length - 1;
           if (copy["date"][i]["Hospital"][j]["vaccine"] == "COVISHIELD") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
               j--;
             }
           } else if (copy["date"][i]["Hospital"][j]["vaccine"] == "SPUTNIK V") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
@@ -837,8 +793,12 @@ function changeData(copy) {
         for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
           let l = copy["date"][i]["Hospital"].length - 1;
           if (copy["date"][i]["Hospital"][j]["vaccine"] == "COVAXIN") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
@@ -847,8 +807,12 @@ function changeData(copy) {
           } else if (
             copy["date"][i]["Hospital"][j]["vaccine"] == "COVISHIELD"
           ) {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
@@ -873,8 +837,12 @@ function changeData(copy) {
         for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
           let l = copy["date"][i]["Hospital"].length - 1;
           if (copy["date"][i]["Hospital"][j]["vaccine"] == "SPUTNIK V") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
@@ -899,8 +867,12 @@ function changeData(copy) {
         for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
           let l = copy["date"][i]["Hospital"].length - 1;
           if (copy["date"][i]["Hospital"][j]["vaccine"] == "COVAXIN") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
@@ -925,8 +897,12 @@ function changeData(copy) {
         for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
           let l = copy["date"][i]["Hospital"].length - 1;
           if (copy["date"][i]["Hospital"][j]["vaccine"] == "COVISHIELD") {
-            copy["date"][i]["total"] -=
+            copy["date"][i]["available_capacity"] -=
               copy["date"][i]["Hospital"][j]["1stdose"] +
+              copy["date"][i]["Hospital"][j]["2nddose"];
+            copy["date"][i]["available_capacity_dose1"] -=
+              copy["date"][i]["Hospital"][j]["1stdose"];
+            copy["date"][i]["available_capacity_dose2"] -=
               copy["date"][i]["Hospital"][j]["2nddose"];
             copy["date"][i]["Hospital"].splice(j, 1);
             if (j != l) {
@@ -950,8 +926,12 @@ function changeData(copy) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
         if (copy["date"][i]["Hospital"][j]["min_age"] == 45) {
-          copy["date"][i]["total"] -=
+          copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][j]["1stdose"] +
+            copy["date"][i]["Hospital"][j]["2nddose"];
+          copy["date"][i]["available_capacity_dose1"] -=
+            copy["date"][i]["Hospital"][j]["1stdose"];
+          copy["date"][i]["available_capacity_dose2"] -=
             copy["date"][i]["Hospital"][j]["2nddose"];
           copy["date"][i]["Hospital"].splice(j, 1);
           if (j != l) {
@@ -973,8 +953,12 @@ function changeData(copy) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
         if (copy["date"][i]["Hospital"][j]["min_age"] == 18) {
-          copy["date"][i]["total"] -=
+          copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][j]["1stdose"] +
+            copy["date"][i]["Hospital"][j]["2nddose"];
+          copy["date"][i]["available_capacity_dose1"] -=
+            copy["date"][i]["Hospital"][j]["1stdose"];
+          copy["date"][i]["available_capacity_dose2"] -=
             copy["date"][i]["Hospital"][j]["2nddose"];
           copy["date"][i]["Hospital"].splice(j, 1);
           if (j != l) {
@@ -1011,7 +995,10 @@ function changeData(copy) {
     for (let i = 0; i < copy["date"].length; i++) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
-        copy["date"][i]["total"] -= copy["date"][i]["Hospital"][j]["2nddose"];
+        copy["date"][i]["available_capacity"] -=
+          copy["date"][i]["Hospital"][j]["2nddose"];
+        copy["date"][i]["available_capacity_dose2"] -=
+          copy["date"][i]["Hospital"][j]["2nddose"];
         if (copy["date"][i]["Hospital"][j]["1stdose"] == 0) {
           copy["date"][i]["Hospital"].splice(j, 1);
           if (j != l) {
@@ -1047,7 +1034,10 @@ function changeData(copy) {
     for (let i = 0; i < copy["date"].length; i++) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
-        copy["date"][i]["total"] -= copy["date"][i]["Hospital"][j]["1stdose"];
+        copy["date"][i]["available_capacity"] -=
+          copy["date"][i]["Hospital"][j]["1stdose"];
+        copy["date"][i]["available_capacity_dose1"] -=
+          copy["date"][i]["Hospital"][j]["1stdose"];
         if (copy["date"][i]["Hospital"][j]["2nddose"] == 0) {
           copy["date"][i]["Hospital"].splice(j, 1);
           if (j != l) {
@@ -1074,11 +1064,11 @@ function changeData(copy) {
             if (
               copy["date"][i]["vaccine"][`${vaccine_names[j]}`][
                 `${age_list[k]}`
-              ][`${dose_list[l]}`].hasOwnProperty("paid")
+              ][`${dose_list[l]}`].hasOwnProperty("Paid")
             ) {
               delete copy["date"][i]["vaccine"][`${vaccine_names[j]}`][
                 `${age_list[k]}`
-              ][`${dose_list[l]}`]["paid"];
+              ][`${dose_list[l]}`]["Paid"];
             }
           }
         }
@@ -1086,8 +1076,12 @@ function changeData(copy) {
       for (let m = 0; m < copy["date"][i]["Hospital"].length; m++) {
         let n = copy["date"][i]["Hospital"].length - 1;
         if (copy["date"][i]["Hospital"][m]["fee_type"] == "Paid") {
-          copy["date"][i]["total"] -=
+          copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][m]["1stdose"] +
+            copy["date"][i]["Hospital"][m]["2nddose"];
+          copy["date"][i]["available_capacity_dose1"] -=
+            copy["date"][i]["Hospital"][m]["1stdose"];
+          copy["date"][i]["available_capacity_dose2"] -=
             copy["date"][i]["Hospital"][m]["2nddose"];
           copy["date"][i]["Hospital"].splice(m, 1);
           if (m != n) {
@@ -1113,11 +1107,11 @@ function changeData(copy) {
             if (
               copy["date"][i]["vaccine"][`${vaccine_names[j]}`][
                 `${age_list[k]}`
-              ][`${dose_list[l]}`].hasOwnProperty("free")
+              ][`${dose_list[l]}`].hasOwnProperty("Free")
             ) {
               delete copy["date"][i]["vaccine"][`${vaccine_names[j]}`][
                 `${age_list[k]}`
-              ][`${dose_list[l]}`]["free"];
+              ][`${dose_list[l]}`]["Free"];
             }
           }
         }
@@ -1125,8 +1119,12 @@ function changeData(copy) {
       for (let m = 0; m < copy["date"][i]["Hospital"].length; m++) {
         let n = copy["date"][i]["Hospital"].length - 1;
         if (copy["date"][i]["Hospital"][m]["fee_type"] == "Free") {
-          copy["date"][i]["total"] -=
+          copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][m]["1stdose"] +
+            copy["date"][i]["Hospital"][m]["2nddose"];
+          copy["date"][i]["available_capacity_dose1"] -=
+            copy["date"][i]["Hospital"][m]["1stdose"];
+          copy["date"][i]["available_capacity_dose2"] -=
             copy["date"][i]["Hospital"][m]["2nddose"];
           copy["date"][i]["Hospital"].splice(m, 1);
           if (m != n) {
@@ -1195,27 +1193,27 @@ var results = (function () {
         }
         div.innerHTML = "";
         div.innerHTML += `<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content ">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="staticBackdropLabel">Error</h5>
-                        </div>
-                        <div class="modal-body">
-                         Could not retrieve data.
-                         please try again.
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-primary" data-dismiss="modal" id="Retry" onclick="results.getData(${type},${type1},${cb},${flag},${d})">Try Again</button>
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content ">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Error</h5>
+                          </div>
+                          <div class="modal-body">
+                           Could not retrieve data.
+                           please try again.
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" id="Retry" onclick="results.getData(${type},${type1},${cb},${flag},${d})">Try Again</button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>`;
+                    </div>`;
         $("#staticBackdrop").modal("show");
         div.innerHTML += `<div class="d-flex justify-content-center">
-                  <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
-                  </div>
-                </div>`;
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>`;
       }, 10000);
       fetch(url, {
         method: "GET",
@@ -1573,6 +1571,7 @@ function rel() {
   }
 }
 function formSubmit(type, type1, cb) {
+  removePopOver();
   if (type1 == 2) {
     //district search
     sessionStorage.removeItem("pin");
@@ -1599,7 +1598,8 @@ function formSubmit(type, type1, cb) {
   }
   let div = document.getElementById("dateResults");
   results.getData(type, type1, () => {
-    plotData(3);
+    plotData(3, undefined, true);
+    document.getElementById("filters").classList += " col-12";
     cb();
   });
   if (type == 0) {
@@ -1608,81 +1608,81 @@ function formSubmit(type, type1, cb) {
     if (!res) {
       mainContent.innerHTML = "";
       mainContent.innerHTML = `<div class="container h-100" id="start">
-                <div class=" d-flex justify-content-center align-items-center">
-                            <a href="#" >
-                            <button class="btn Button-clicked" id="flexDistrict" onclick="SwithToDistrict()">District</button>
-                            </a>
-                            <a href="#" >
-                                <button class="btn btn-secondary" id="flexPincode" onclick="SwithToPin()">Pincode</button>
-                            </a>
-                </div>
-                <div class="d-flex h-100 justify-content-center align-items-center" id="BeforeStateToPin">
-                    <form class="form-group " id="StateToPin1">
-                        <div class="form-group " id="0statechange">
-                        <label for="state">State</label>
-                        <select class="form-control" id="state1" onchange="stateSelected(this.value,1)">
-                        </select>
-                        </div>
-                        <div class="form-group" id="mydiv1">
-                        <label for="District">District</label>
-                        <select class="form-control" id="district1">
-                        </select>
-                        </div>
-                        <div class="form-group col-sm-4">
-                        <button class="btn btn-success my-2 my-sm-0" type="submit" id="DistrictSubmit1">Search</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="container h-100">
-                <div class="d-flex h-100 align-items-center justify-content-center">
-                    <div class="font-weight-bold">Filters</div>
-                </div>
-            </div>
-            <div class="d-flex align-items-center justify-content-center" id="filters">
-                <div class="btn-group">
-                    <button type="button" id="agefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    18+
-                    </button>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" id="agefilter1" href="javascript:Button.click('18+')">18+</a>
-                    <a class="dropdown-item" id="agefilter2" href="javascript:Button.click('45+')">45+</a>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button type="button" id="vaccinefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    COVISHIELD
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield')">COVISHIELD</a>
-                    <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
-                    <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik')">SPUTNIK</a>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button type="button" id="feefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    free
-                    </button>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" id="feefilter1" href="javascript:Button.click('free')" >free</a>
-                    <a class="dropdown-item" id="feefilter2" href="javascript:Button.click('paid')" >paid</a>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button type="button" id="dosefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    1stDose
-                    </button>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" id="dosefilter1" href="javascript:Button.click('1stDose')">1stDose</a>
-                    <a class="dropdown-item" id="dosefilter2" href="javascript:Button.click('2ndDose')">2ndDose</a>
-                    </div>
-                </div>
-            </div>
-            </br>
-            <div id="res">
-            <div id="dateResults" class="container h-100">
-            </div>
-            </div>`;
+                  <div class=" d-flex justify-content-center align-items-center">
+                              <a href="#" >
+                              <button class="btn Button-clicked" id="flexDistrict" onclick="SwithToDistrict()">District</button>
+                              </a>
+                              <a href="#" >
+                                  <button class="btn btn-secondary" id="flexPincode" onclick="SwithToPin()">Pincode</button>
+                              </a>
+                  </div>
+                  <div class="d-flex h-100 justify-content-center align-items-center" id="BeforeStateToPin">
+                      <form class="form-group " id="StateToPin1">
+                          <div class="form-group " id="0statechange">
+                          <label for="state">State</label>
+                          <select class="form-control" id="state1" onchange="stateSelected(this.value,1)">
+                          </select>
+                          </div>
+                          <div class="form-group" id="mydiv1">
+                          <label for="District">District</label>
+                          <select class="form-control" id="district1">
+                          </select>
+                          </div>
+                          <div class="form-group col-sm-4">
+                          <button class="btn btn-success my-2 my-sm-0" type="submit" id="DistrictSubmit1">Search</button>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+              <div class="container h-100">
+                  <div class="d-flex h-100 align-items-center justify-content-center">
+                      <div class="font-weight-bold">Filters</div>
+                  </div>
+              </div>
+              <div class="d-flex align-items-center justify-content-center" id="filters">
+                  <div class="btn-group">
+                      <button type="button" id="agefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      18+
+                      </button>
+                      <div class="dropdown-menu">
+                      <a class="dropdown-item" id="agefilter1" href="javascript:Button.click('18+')">18+</a>
+                      <a class="dropdown-item" id="agefilter2" href="javascript:Button.click('45+')">45+</a>
+                      </div>
+                  </div>
+                  <div class="btn-group">
+                      <button type="button" id="vaccinefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      COVISHIELD
+                      </button>
+                      <div class="dropdown-menu">
+                          <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield')">COVISHIELD</a>
+                      <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
+                      <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik')">SPUTNIK</a>
+                      </div>
+                  </div>
+                  <div class="btn-group">
+                      <button type="button" id="feefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      free
+                      </button>
+                      <div class="dropdown-menu">
+                      <a class="dropdown-item" id="feefilter1" href="javascript:Button.click('free')" >free</a>
+                      <a class="dropdown-item" id="feefilter2" href="javascript:Button.click('paid')" >paid</a>
+                      </div>
+                  </div>
+                  <div class="btn-group">
+                      <button type="button" id="dosefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      1stDose
+                      </button>
+                      <div class="dropdown-menu">
+                      <a class="dropdown-item" id="dosefilter1" href="javascript:Button.click('1stDose')">1stDose</a>
+                      <a class="dropdown-item" id="dosefilter2" href="javascript:Button.click('2ndDose')">2ndDose</a>
+                      </div>
+                  </div>
+              </div>
+              </br>
+              <div id="res">
+              <div id="dateResults" class="container h-100">
+              </div>
+              </div>`;
     }
     SwithToDistrict();
     loadStates(1, sessionStorage.getItem("currentState"));
@@ -1691,19 +1691,19 @@ function formSubmit(type, type1, cb) {
   if (div) {
     div.innerHTML = "";
     div.innerHTML += `<div class="d-flex justify-content-center">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>`;
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>`;
   } else {
     div = document.getElementById("res");
     if (div) {
       div.innerHTML = "";
       div.innerHTML += `<div class="d-flex justify-content-center">
-            <div class="spinner-border text-primary" role="status">
-              <span class="sr-only">Loading...</span>
-            </div>
-          </div>`;
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>`;
     }
   }
 }
@@ -1737,28 +1737,36 @@ function SwitchToHospital(date) {
     newtitle = `Vaccination centers in ${d_name} on ${date}`;
     document.title = newtitle;
   }
-  $('[data-toggle="popover"]').popover({
-    placement: "top",
-    html: true,
-    content:
-      '<a href="javascript:" id="closePopover" class="close btn"data-dismiss="alert">&times;</a><div class="media-body">click here to get more information about this vaccination center</div>',
-  });
-  $('[data-toggle="popover"]').popover("show");
-  document.getElementById("hospitalResults").addEventListener(
-    "mouseover",
-    (e) => {
-      if (e.target.id.includes("Hospital") && e.target.id != "HospitalRes") {
-        e.target.click();
-      }
-    },
-    false
-  );
+  addPopOver();
+}
+
+function addPopOver() {
+  if (!sessionStorage.getItem("popover")) {
+    $('[data-toggle="popover"]').popover({
+      placement: "top",
+      html: true,
+      content:
+        '<a href="javascript:" id="closePopover" class="close btn"data-dismiss="alert">&times;</a><div class="media-body">click here to get more information about this vaccination center</div>',
+    });
+    $('[data-toggle="popover"]').popover("show");
+    sessionStorage.setItem("popover", "added");
+  }
+}
+function removePopOver() {
+  if (
+    sessionStorage.getItem("popover") &&
+    sessionStorage.getItem("popover") == "added"
+  ) {
+    sessionStorage.setItem("popover", "removed");
+    $('[data-toggle="popover"]').popover("hide");
+    $("#ad").popover("dispose");
+  }
 }
 /*
-type = 3 => plot data date-wise with only number of total available slots to be shown.
-type = 4 => plot data hospital wise on a particular date. 
-*/
-function plotData(type, date) {
+  type = 3 => plot data date-wise with only number of total available slots to be shown.
+  type = 4 => plot data hospital wise on a particular date. 
+  */
+function plotData(type, date, Ispopstate) {
   let usefulData = results.filterData();
   let previousSelectedState = sessionStorage.getItem("currentState");
   let previousSelectedDistrict = sessionStorage.getItem("currentDistrict");
@@ -1783,42 +1791,50 @@ function plotData(type, date) {
       } else {
         div = document.getElementById("MainContent");
         div.innerHTML = "";
-        div.innerHTML += `<div class="container h-100" id="start">
-                 <div class=" d-flex justify-content-center align-items-center">
-                             <a href="#" >
-                             <button class="btn Button-clicked" id="flexDistrict" onclick="SwithToDistrict()">District</button>
-                             </a>
-                             <a href="#" >
-                                 <button class="btn btn-secondary" id="flexPincode" onclick="SwithToPin()">Pincode</button>
-                             </a>
-                 </div>
-                 <div class="d-flex h-100 justify-content-center align-items-center" id="BeforeStateToPin">
-                     <form class="form-group " id="StateToPin1">
-                         <div class="form-group ">
-                         <label for="state">State</label>
-                         <select class="form-control" id="state1" onchange="stateSelected(this.value,1)">
-                         </select>
-                         </div>
-                         <div class="form-group" id="mydiv1">
-                         <label for="District">District</label>
-                         <select class="form-control" id="district1">
-                         </select>
-                         </div>
-                         <div class="form-group col-sm-4">
-                         <button class="btn btn-success my-2 my-sm-0" type="submit" id="DistrictSubmit1">Search</button>
-                         </div>
-                     </form>
-                 </div>
-             </div>
-             <div class="container h-100">
-                 <div class="d-flex h-100 align-items-center justify-content-center">
-                     <div class="font-weight-bold">Filters</div>
+        if (Ispopstate) {
+          div.innerHTML = `
+          ${addFilterButtons()}
+          <div id="res" class="col-12 my-3">
+          <div id="dateResults" class="container h-100"></div>
+          </div>`;
+        } else {
+          div.innerHTML += `<div class="container h-100" id="start">
+                     <div class=" d-flex justify-content-center align-items-center">
+                                 <a href="#" >
+                                 <button class="btn Button-clicked" id="flexDistrict" onclick="SwithToDistrict()">District</button>
+                                 </a>
+                                 <a href="#" >
+                                     <button class="btn btn-secondary" id="flexPincode" onclick="SwithToPin()">Pincode</button>
+                                 </a>
                      </div>
-             </div>${addFilterButtons()}</br>
-                 <div id="res">
-                 <div id="dateResults" class="container h-100">
-                 </div> 
-                 </div>`;
+                     <div class="d-flex h-100 justify-content-center align-items-center" id="BeforeStateToPin">
+                         <form class="form-group " id="StateToPin1">
+                             <div class="form-group ">
+                             <label for="state">State</label>
+                             <select class="form-control" id="state1" onchange="stateSelected(this.value,1)">
+                             </select>
+                             </div>
+                             <div class="form-group" id="mydiv1">
+                             <label for="District">District</label>
+                             <select class="form-control" id="district1">
+                             </select>
+                             </div>
+                             <div class="form-group col-sm-4">
+                             <button class="btn btn-success my-2 my-sm-0" type="submit" id="DistrictSubmit1">Search</button>
+                             </div>
+                         </form>
+                     </div>
+                 </div>
+                 <div class="container h-100">
+                     <div class="d-flex h-100 align-items-center justify-content-center">
+                         <div class="font-weight-bold">Filters</div>
+                         </div>
+                 </div>${addFilterButtons()}</br>
+                     <div id="res">
+                     <div id="dateResults" class="container h-100">
+                     </div> 
+                     </div>`;
+        }
         if (!OnDistrictTab) {
           SwithToPin();
           let input = document.getElementById("pininput1");
@@ -1876,41 +1892,41 @@ function plotData(type, date) {
           break;
         }
       }
-      total = usefulData["date"][index]["total"];
+      total = usefulData["date"][index]["available_capacity"];
       if (total <= 0) {
         total = 0;
         div.innerHTML += `<div class="d-flex align-items-center justify-content-center">
-                         <div class="row">
-                             <div class="card text-white bg-secondary mb-3" id="req" >
-                                 <div class="card-header">${dates[i]}</div>
-                                 <div class="card-body">
-                                 <h5 class="card-title">Available slots : ${total} <span><a href="javascript:SwitchToHospital('${
+                           <div class="row">
+                               <div class="card text-white bg-secondary mb-3" id="req" >
+                                   <div class="card-header">${dates[i]}</div>
+                                   <div class="card-body">
+                                   <h5 class="card-title">Available slots : ${total} <span><a href="javascript:SwitchToHospital('${
           dates[i]
         }')" class="btn disabled"><img src="img/arrow-right.svg"></img></a></span></h5>
-                                 <p class="card-text">${addBadges(
-                                   usefulData["date"][index]["vaccine"]
-                                 )}</p>
-                                 </div>
-                                 </div>
-                             </div>
-                         </div>`;
+                                   <p class="card-text">${addBadges(
+                                     usefulData["date"][index]["vaccine"]
+                                   )}</p>
+                                   </div>
+                                   </div>
+                               </div>
+                           </div>`;
       } else if (total > 0) {
         div.innerHTML += `<div class="d-flex align-items-center justify-content-center">
-                         <div class="row">
-                             <div class="card text-white bg-success mb-3" id="req" >
-                                 <div class="card-header">${dates[i]}</div>
-                                 <div class="card-body">
-                                 <h5 class="card-title">Available slots : ${total} <span><a href="javascript:SwitchToHospital('${
+                           <div class="row">
+                               <div class="card text-white bg-success mb-3" id="req" >
+                                   <div class="card-header">${dates[i]}</div>
+                                   <div class="card-body">
+                                   <h5 class="card-title">Available slots : ${total} <span><a href="javascript:SwitchToHospital('${
           dates[i]
         }')" class="btn active"><img src="img/arrow-right.svg"></img></a></span></h5>
-                                 <p class="card-text">${addBadges(
-                                   usefulData["date"][index]["vaccine"]
-                                 )}</p>
-                                 </div>
-                                 </div>
-                             </div>
-                         </div>
-                     `;
+                                   <p class="card-text">${addBadges(
+                                     usefulData["date"][index]["vaccine"]
+                                   )}</p>
+                                   </div>
+                                   </div>
+                               </div>
+                           </div>
+                       `;
       }
     }
   } else if (type == 4) {
@@ -1943,16 +1959,10 @@ function plotData(type, date) {
       // history.replaceState: change the provided date to date at index 0.
     }
     showData.plot(usefulData["date"][index]["Hospital"], date, 1);
-    if (!sessionStorage.getItem("popover")) {
-      sessionStorage.setItem("popover", "y");
-      $('[data-toggle="popover"]').popover({
-        placement: "top",
-        html: true,
-        content:
-          '<a href="javascript:" id="closePopover" class="close btn"data-dismiss="alert">&times;</a><div class="media-body">click here to get more information about this vaccination center</div>',
-      });
-      $('[data-toggle="popover"]').popover("show");
-    }
+    addPopOver();
+    $(".card-body").on("click", (e) => {
+      e.stopPropagation();
+    });
   }
 }
 function previousPage(number) {
@@ -2072,7 +2082,7 @@ var showData = (function () {
           }
           return;
         }
-        div.innerHTML += `<div class="d-flex p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
+        div.innerHTML += `<div class="d-flex flex-column p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
         div = document.getElementById("HospitalRes");
         div.innerHTML = "";
         div.innerHTML += `<div class="card " data-toggle="popover" id="ad" onclick="DelegateClick(${startIndex})"><div class="d-flex card-header ${
@@ -2081,9 +2091,14 @@ var showData = (function () {
             : "btn-secondary"
         } align-items-center justify-content-center" id="Hospital${startIndex}" ><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName${startIndex}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${startIndex}" aria-expanded="false" aria-controls="Hospitaldetails${startIndex}">${
           data[startIndex]["name"]
-        }</button></h2></div><div id="Hospitaldetails${startIndex}" class="collapse" aria-labelledby="Hospital${startIndex}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${
+        }</button></h2></div><div id="Hospitaldetails${startIndex}" class="collapse" aria-labelledby="Hospital${startIndex}" data-parent="#HospitalRes"><div class="card-body"><p id="HospitalAddress">${
           data[startIndex]["address"]
-        }<p>${addBadges(
+        }</p>
+        <p id="blockname">${data[startIndex]["block_name"]}</p>
+        <p id="districtname">${data[startIndex]["district_name"]}</p>
+        <p id="statename">${data[startIndex]["state_name"]}</p>
+        <p id="pin22">${data[startIndex]["pincode"]}</p>
+        <p>${addBadges(
           data,
           startIndex
         )}</p><ul class="list-group"><li class="list-group-item ${
@@ -2098,17 +2113,30 @@ var showData = (function () {
             : "list-group-item-secondary"
         }" id="dose2">${
           data[startIndex]["2nddose"]
+        }</li><li class="list-group-item ${
+          data[startIndex]["3rddose"] > 0
+            ? "list-group-item-success"
+            : "list-group-item-secondary"
+        }" id="dose3">${
+          data[startIndex]["3rddose"]
         }</li></ul></div></div></div>`;
         for (let i = startIndex + 1; i < lastIndex; i++) {
           div.innerHTML += `<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${
-            data[i]["1stdose"] > 0 || data[i]["2nddose"] > 0
+            data[i]["1stdose"] > 0 ||
+            data[i]["2nddose"] > 0 ||
+            data[i]["3rddose"] > 0
               ? "btn-success"
               : "btn-secondary"
           } align-items-center justify-content-center" id="Hospital${i}" ><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName${i}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${i}" aria-expanded="false" aria-controls="Hospitaldetails${i}">${
             data[i]["name"]
-          }</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${
+          }</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body" ><p id="HospitalAddress">${
             data[i]["address"]
-          }<p>${addBadges(
+          }</p>
+          <p id="blockname">${data[i]["block_name"]}</p>
+          <p id="districtname">${data[i]["district_name"]}</p>
+          <p id="statename">${data[i]["state_name"]}</p>
+          <p id="pin22">${data[i]["pincode"]}</p>
+          <p>${addBadges(
             data,
             i
           )}</p><ul class="list-group"><li class="list-group-item ${
@@ -2119,7 +2147,12 @@ var showData = (function () {
             data[i]["2nddose"] > 0
               ? "list-group-item-success"
               : "list-group-item-secondary"
-          }" id="dose2">${data[i]["2nddose"]}</li></ul></div></div></div>`;
+          }" id="dose2">${data[i]["2nddose"]}</li><li class="list-group-item ${
+            data[i]["3rdddose"] > 0
+              ? "list-group-item-success"
+              : "list-group-item-secondary"
+          }" id="dose3">${data[i]["3rddose"]}</li>
+          </ul></div></div></div>`;
         }
       } else {
         div = document.getElementById("MainContent");
@@ -2146,13 +2179,13 @@ var showData = (function () {
           return;
         }
         //  div.innerHTML+=`<div class="d-flex justify-content-start"><div class="p-2"><a href="javascript:GoBackToDateResults()" title="go back" class="btn active" id="gobackanchor"><img src="img/arrow-left.svg" alt="go back"></a></div></div>`;
-        div.innerHTML += `<div class="d-flex justify-content-between" id="dateShift">
-                                    <div class="p-2"><a href="javascript:Previousdate()" title="goto previous date" id="previousdateanchor" class="btn active"><img src="img/arrow-left.svg" alt="goto previous date" id="dateshiftleft"></a></div><div class="p-2 font-weight-bold" title="current date" id="currentdate">${currentDate}</div><div class="p-2"><a href="javascript:Nextdate()" title="goto next date" id="nextdateanchor" class="btn active"><img src="img/arrow-right.svg" alt="goto next date" id="dateshiftright"></a></div></div>`;
+        div.innerHTML += `<div class="d-flex col-12 order-1 justify-content-between" id="dateShift">
+                                      <div class="p-2"><a href="javascript:Previousdate()" title="goto previous date" id="previousdateanchor" class="btn active"><img src="img/arrow-left.svg" alt="goto previous date" id="dateshiftleft"></a></div><div class="p-2 font-weight-bold" title="current date" id="currentdate">${currentDate}</div><div class="p-2"><a href="javascript:Nextdate()" title="goto next date" id="nextdateanchor" class="btn active"><img src="img/arrow-right.svg" alt="goto next date" id="dateshiftright"></a></div></div>`;
 
         addFilterButtons(div);
-        div.innerHTML += `<div id="hospitalResults"></div>`;
+        div.innerHTML += `<div id="hospitalResults" class="col-12 order-3"></div>`;
         div = document.getElementById("hospitalResults");
-        div.innerHTML += `<div class="d-flex p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
+        div.innerHTML += `<div class="d-flex flex-column p-2 align-items-center justify-content-center"><div class="accordion" id="HospitalRes"></div></div>`;
         div = document.getElementById("HospitalRes");
         div.innerHTML = "";
         div.innerHTML += `<div class="card " id="ad" data-toggle="popover" onclick="DelegateClick(${startIndex})"><div class="d-flex card-header ${
@@ -2161,9 +2194,14 @@ var showData = (function () {
             : "btn-secondary"
         } align-items-center justify-content-center" id="Hospital${startIndex}"><h2 class="mb-0" ><button class="btn collapsed" id="HospitalName${startIndex}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${startIndex}" aria-expanded="false" aria-controls="Hospitaldetails${startIndex}">${
           data[startIndex]["name"]
-        }</button></h2></div><div id="Hospitaldetails${startIndex}" class="collapse" aria-labelledby="Hospital${startIndex}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${
+        }</button></h2></div><div id="Hospitaldetails${startIndex}" class="collapse" aria-labelledby="Hospital${startIndex}" data-parent="#HospitalRes"><div class="card-body"><p id="HospitalAddress">${
           data[startIndex]["address"]
-        }<p>${addBadges(
+        }</p>
+        <p id="blockname">${data[startIndex]["block_name"]}</p>
+        <p id="districtname">${data[startIndex]["district_name"]}</p>
+        <p id="statename">${data[startIndex]["state_name"]}</p>
+        <p id="pin22">${data[startIndex]["pincode"]}</p>
+        <p>${addBadges(
           data,
           startIndex
         )}</p><ul class="list-group"><li class="list-group-item ${
@@ -2178,7 +2216,13 @@ var showData = (function () {
             : "list-group-item-secondary"
         }" id="dose2">${
           data[startIndex]["2nddose"]
-        }</li></ul></div></div></div>`;
+        }</li><li class="list-group-item ${
+          data[startIndex]["3rddose"] > 0
+            ? "list-group-item-success"
+            : "list-group-item-secondary"
+        }" id="dose3" style="display:${
+          data[startIndex]["3rddose"] > 0 ? "block" : "none"
+        }">${data[startIndex]["3rddose"]}</li></ul></div></div></div>`;
         for (let i = startIndex + 1; i < lastIndex; i++) {
           div.innerHTML += `<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${
             data[i]["1stdose"] > 0 || data[i]["2nddose"] > 0
@@ -2186,9 +2230,14 @@ var showData = (function () {
               : "btn-secondary"
           } align-items-center justify-content-center" id="Hospital${i}"><h2 class="mb-0"><button class="btn collapsed" id="HospitalName${i}" type="button" data-toggle="collapse" data-target="#Hospitaldetails${i}" aria-expanded="false" aria-controls="Hospitaldetails${i}">${
             data[i]["name"]
-          }</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body" id="HospitalAddress">${
+          }</button></h2></div><div id="Hospitaldetails${i}" class="collapse" aria-labelledby="Hospital${i}" data-parent="#HospitalRes"><div class="card-body"><p id="HospitalAddress">${
             data[i]["address"]
-          }<p>${addBadges(
+          }</p>
+          <p id="blockname">${data[i]["block_name"]}</p>
+          <p id="districtname">${data[i]["district_name"]}</p>
+          <p id="statename">${data[i]["state_name"]}</p>
+          <p id="pin22">${data[i]["pincode"]}</p>
+          <p>${addBadges(
             data,
             i
           )}</p><ul class="list-group"><li class="list-group-item ${
@@ -2199,7 +2248,13 @@ var showData = (function () {
             data[i]["2nddose"] > 0
               ? "list-group-item-success"
               : "list-group-item-secondary"
-          }" id="dose2">${data[i]["2nddose"]}</li></ul></div></div></div>`;
+          }" id="dose2">${data[i]["2nddose"]}</li><li class="list-group-item ${
+            data[i]["3rddose"] > 0
+              ? "list-group-item-success"
+              : "list-group-item-secondary"
+          }" id="dose3" style="display:${
+            data[i]["3rddose"] > 0 ? "block" : "none"
+          }">${data[i]["3rddose"]}</li></ul></div></div></div>`;
         }
       }
       let pageStart = 1;
@@ -2217,12 +2272,12 @@ var showData = (function () {
         }
       }
       let s = `<nav aria-label="Vaccination Centers Page navigation">
-            <ul id="PageNavUl" class="pagination justify-content-center">
-                <li class="page-item" id="PreviousPage">
-                <a  id="PrevA" class="page-link text-white bg-secondary" href="javascript:previousPage(-1)" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-                </li>`;
+              <ul id="PageNavUl" class="pagination justify-content-center">
+                  <li class="page-item" id="PreviousPage">
+                  <a  id="PrevA" class="page-link text-white bg-secondary" href="javascript:previousPage(-1)" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                  </a>
+                  </li>`;
       for (let i = pageStart; i < PageEnd; i++) {
         s += `<li class="page-item"><a id="pagination1" class="page-link ${
           currentPageNumber == i
@@ -2231,9 +2286,10 @@ var showData = (function () {
         } " href="javascript:changePage(${i})">${i}</a></li>`;
       }
       s += `<li class="page-item" id="NextPage"><a id="NextA" class="page-link text-white bg-secondary" href="javascript:nextPage(-2)" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li></ul></nav>`;
-      div.innerHTML += s;
+      let p = div.parentElement;
+      p.innerHTML += s;
       s = `<div class=" d-flex justify-content-center text-dark">Showing Page Number ${currentPageNumber} of Total ${NumberOfPages} Pages</div>`;
-      div.innerHTML += s;
+      p.innerHTML += s;
     },
     TotalPages: function () {
       return NumberOfPages;
@@ -2251,129 +2307,129 @@ var showData = (function () {
 })();
 function addFilterButtons(obj) {
   if (typeof obj != "undefined") {
-    obj.innerHTML += `<div class="d-flex align-items-center justify-content-center" id="filters">
-        <div class="btn-group">
-            <button type="button" id="agefilter" class="btn ${
-              Button.isClicked("18+") || Button.isClicked("45+")
-                ? "Button-clicked"
-                : "btn-secondary"
-            } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            ${
-              Button.isClicked("18+")
-                ? "18+"
-                : Button.isClicked("45+")
-                ? "45+"
-                : "18+"
-            }
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" id="agefilter1" href="javascript:Button.click('18+')">18+</a>
-              <a class="dropdown-item" id="agefilter2" href="javascript:Button.click('45+')">45+</a>
-            </div>
-        </div>
-        <div class="btn-group">
-            <button type="button" id="vaccinefilter" class="btn ${
-              Button.isClicked("covishield") ||
-              Button.isClicked("covaxin") ||
-              Button.isClicked("sputnik")
-                ? "Button-clicked"
-                : "btn-secondary"
-            } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            ${
-              Button.isClicked("covishield")
-                ? "COVISHIELD"
-                : Button.isClicked("covaxin")
-                ? "COVAXIN"
-                : Button.isClicked("sputnik v")
-                ? "SPUTNIK V"
-                : "COVISHIELD"
-            }  
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield')">COVISHIELD</a>
-              <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
-              <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik v')">SPUTNIK V</a>
-            </div>
-        </div>
-        <div class="btn-group">
-            <button type="button" id="feefilter" class="btn  ${
-              Button.isClicked("free") || Button.isClicked("paid")
-                ? "Button-clicked"
-                : "btn-secondary"
-            } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            ${
-              Button.isClicked("free")
-                ? "free"
-                : Button.isClicked("paid")
-                ? "paid"
-                : "free"
-            }
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" id="feefilter1" href="javascript:Button.click('free')">free</a>
-              <a class="dropdown-item" id="feefilter2" href="javascript:Button.click('paid')">paid</a>
-            </div>
-        </div>
-        <div class="btn-group">
-            <button type="button" id="dosefilter" class="btn ${
-              Button.isClicked("1stDose") || Button.isClicked("2ndDose")
-                ? "Button-clicked"
-                : "btn-secondary"
-            } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            ${
-              Button.isClicked("1stDose")
-                ? "1stDose"
-                : Button.isClicked("2ndDose")
-                ? "2ndDose"
-                : "1stDose"
-            }
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" id="dosefilter1" href="javascript:Button.click('1stDose')">1stDose</a>
-              <a class="dropdown-item" id="dosefilter2" href="javascript:Button.click('2ndDose')">2ndDose</a>
-            </div>
-        </div>
-    </div>`;
+    obj.innerHTML += `<div class="d-flex order-2 col-12 align-items-center justify-content-center" id="filters">
+          <div class="btn-group">
+              <button type="button" id="agefilter" class="btn ${
+                Button.isClicked("18+") || Button.isClicked("45+")
+                  ? "Button-clicked"
+                  : "btn-secondary"
+              } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              ${
+                Button.isClicked("18+")
+                  ? "18+"
+                  : Button.isClicked("45+")
+                  ? "45+"
+                  : "18+"
+              }
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" id="agefilter1" href="javascript:Button.click('18+')">18+</a>
+                <a class="dropdown-item" id="agefilter2" href="javascript:Button.click('45+')">45+</a>
+              </div>
+          </div>
+          <div class="btn-group">
+              <button type="button" id="vaccinefilter" class="btn ${
+                Button.isClicked("covishield") ||
+                Button.isClicked("covaxin") ||
+                Button.isClicked("sputnik")
+                  ? "Button-clicked"
+                  : "btn-secondary"
+              } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              ${
+                Button.isClicked("covishield")
+                  ? "COVISHIELD"
+                  : Button.isClicked("covaxin")
+                  ? "COVAXIN"
+                  : Button.isClicked("sputnik v")
+                  ? "SPUTNIK V"
+                  : "COVISHIELD"
+              }  
+              </button>
+              <div class="dropdown-menu">
+                  <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield')">COVISHIELD</a>
+                <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
+                <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik v')">SPUTNIK V</a>
+              </div>
+          </div>
+          <div class="btn-group">
+              <button type="button" id="feefilter" class="btn  ${
+                Button.isClicked("free") || Button.isClicked("paid")
+                  ? "Button-clicked"
+                  : "btn-secondary"
+              } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              ${
+                Button.isClicked("free")
+                  ? "free"
+                  : Button.isClicked("paid")
+                  ? "paid"
+                  : "free"
+              }
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" id="feefilter1" href="javascript:Button.click('free')">free</a>
+                <a class="dropdown-item" id="feefilter2" href="javascript:Button.click('paid')">paid</a>
+              </div>
+          </div>
+          <div class="btn-group">
+              <button type="button" id="dosefilter" class="btn ${
+                Button.isClicked("1stDose") || Button.isClicked("2ndDose")
+                  ? "Button-clicked"
+                  : "btn-secondary"
+              } dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              ${
+                Button.isClicked("1stDose")
+                  ? "1stDose"
+                  : Button.isClicked("2ndDose")
+                  ? "2ndDose"
+                  : "1stDose"
+              }
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" id="dosefilter1" href="javascript:Button.click('1stDose')">1stDose</a>
+                <a class="dropdown-item" id="dosefilter2" href="javascript:Button.click('2ndDose')">2ndDose</a>
+              </div>
+          </div>
+      </div>`;
   } else {
     return `<div class="d-flex align-items-center justify-content-center" id="filters">
-        <div class="btn-group">
-            <button type="button" id="agefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              18+
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" id="agefilter1" href="javascript:Button.click('18+')">18+</a>
-              <a class="dropdown-item" id="agefilter2" href="javascript:Button.click('45+')">45+</a>
-            </div>
-        </div>
-        <div class="btn-group">
-            <button type="button" id="vaccinefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              COVISHIELD
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield)">COVISHIELD</a>
-              <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
-              <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik v')">SPUTNIK V</a>
-            </div>
-        </div>
-        <div class="btn-group">
-            <button type="button" id="feefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              free
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" id="feefilter1" href="javascript:Button.click('free')">free</a>
-              <a class="dropdown-item" id="feefilter2" href="javascript:Button.click('paid')">paid</a>
-            </div>
-        </div>
-        <div class="btn-group">
-            <button type="button" id="dosefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              1stDose
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" id="dosefilter1" href="javascript:Button.click('1stDose')">1stDose</a>
-              <a class="dropdown-item" id="dosefilter2" href="javascript:Button.click('2ndDose')">2ndDose</a>
-            </div>
-        </div>
-    </div>`;
+          <div class="btn-group">
+              <button type="button" id="agefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                18+
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" id="agefilter1" href="javascript:Button.click('18+')">18+</a>
+                <a class="dropdown-item" id="agefilter2" href="javascript:Button.click('45+')">45+</a>
+              </div>
+          </div>
+          <div class="btn-group">
+              <button type="button" id="vaccinefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                COVISHIELD
+              </button>
+              <div class="dropdown-menu">
+                  <a class="dropdown-item" id="vaccinefilter1" href="javascript:Button.click('covishield)">COVISHIELD</a>
+                <a class="dropdown-item" id="vaccinefilter2"   href="javascript:Button.click('covaxin')">COVAXIN</a>
+                <a class="dropdown-item" id="vaccinefilter3"   href="javascript:Button.click('sputnik v')">SPUTNIK V</a>
+              </div>
+          </div>
+          <div class="btn-group">
+              <button type="button" id="feefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                free
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" id="feefilter1" href="javascript:Button.click('free')">free</a>
+                <a class="dropdown-item" id="feefilter2" href="javascript:Button.click('paid')">paid</a>
+              </div>
+          </div>
+          <div class="btn-group">
+              <button type="button" id="dosefilter" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                1stDose
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" id="dosefilter1" href="javascript:Button.click('1stDose')">1stDose</a>
+                <a class="dropdown-item" id="dosefilter2" href="javascript:Button.click('2ndDose')">2ndDose</a>
+              </div>
+          </div>
+      </div>`;
   }
 }
 function addBadges(obj, index) {
@@ -2384,7 +2440,7 @@ function addBadges(obj, index) {
     } else {
       let res = `<span class="badge badge-info" title="this date has this vaccine available">${obj[index]["vaccine"]}</span> `;
       res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
-        obj[index]["min_age"] + "+"
+        obj[index]["min_age_limit"] + "+"
       }</span> `;
       res += `<span class="badge badge-info" title="this date has vaccines available by this mode of payment">${
         obj[index]["fee_type"] == "Paid"
@@ -2396,6 +2452,9 @@ function addBadges(obj, index) {
       }
       if (obj[index]["2nddose"] > 0) {
         res += `<span class="badge badge-info" title="this date has vaccines available for 2nddose of vaccination">2nddose</span> `;
+      }
+      if (obj[index]["3rddose"] > 0) {
+        res += `<span class="badge badge-info" title="this date has vaccines available for 3rddose of vaccination">3rddose</span> `;
       }
       return res;
     }
@@ -2414,6 +2473,7 @@ function addBadges(obj, index) {
     for (let i = 0; i < vaccine_names.length; i++) {
       let age_list = Object.getOwnPropertyNames(obj[`${vaccine_names[i]}`]);
       for (let j = 0; j < age_list.length; j++) {
+        //
         if (!ToNotBeAdded.includes(age_list[j])) {
           ToNotBeAdded.push(age_list[j]);
           res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
@@ -2428,7 +2488,11 @@ function addBadges(obj, index) {
       for (let j = 0; j < age_list.length; j++) {
         let dose_list = Object.getOwnPropertyNames(
           obj[`${vaccine_names[i]}`][`${age_list[j]}`]
-        );
+        ).filter((e) => {
+          let a = obj[`${vaccine_names[i]}`][`${age_list[j]}`][e]["Free"] || 0;
+          let b = obj[`${vaccine_names[i]}`][`${age_list[j]}`][e]["Paid"] || 0;
+          return a + b != 0;
+        });
         for (let k = 0; k < dose_list.length; k++) {
           let fee_list = Object.getOwnPropertyNames(
             obj[`${vaccine_names[i]}`][`${age_list[j]}`][`${dose_list[k]}`]
@@ -2454,7 +2518,11 @@ function addBadges(obj, index) {
       for (let j = 0; j < age_list.length; j++) {
         let dose_list = Object.getOwnPropertyNames(
           obj[`${vaccine_names[i]}`][`${age_list[j]}`]
-        );
+        ).filter((e) => {
+          let a = obj[`${vaccine_names[i]}`][`${age_list[j]}`][e]["Free"] || 0;
+          let b = obj[`${vaccine_names[i]}`][`${age_list[j]}`][e]["Paid"] || 0;
+          return a + b != 0;
+        });
         for (let k = 0; k < dose_list.length; k++) {
           if (!ToNotBeAdded.includes(dose_list[k])) {
             ToNotBeAdded.push(dose_list[k]);
@@ -2475,251 +2543,231 @@ function DelegateClick(val) {
     }
   }
 }
+function validatePin(str) {
+  let pattern = new RegExp("^[1-9]{1}[0-9]{2}[0-9]{3}$");
+  return pattern.test(str);
+}
 function ConvertData(data) {
-  let date = [];
+  let result = [];
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < data[i].sessions.length; j++) {
-      if (!date.includes(data[i].sessions[j].date)) {
-        date.push(data[i].sessions[j].date);
+      if (
+        typeof result.find((e) => e.value === data[i].sessions[j].date) ===
+        "undefined"
+      ) {
+        result.push({
+          value: data[i].sessions[j].date,
+          fee_type: [data[i].fee_type],
+          available_capacity: 0,
+          available_capacity_dose1: 0,
+          available_capacity_dose2: 0,
+          available_capacity_dose3: 0,
+          Hospital: [],
+          vaccine: {},
+        });
       }
     }
   }
-  var res = {};
-  var datearray = [];
-  let vaccines = ["COVISHIELD", "COVAXIN", "SPUTNIK V"];
-  let age_limits = [18, 45];
-  for (let i = 0; i < date.length; i++) {
-    let datetemp = {};
-    var hospitaltemp = [];
-    datetemp["value"] = date[i];
-    datetemp["total"] = 0;
-    for (let j = 0; j < data.length; j++) {
-      for (let k = 0; k < data[j].sessions.length; k++) {
-        if (data[j]["sessions"][k]["date"] != date[i]) {
-          continue;
-        }
-        var hospitaldatatemp = {};
-        let vaccinetemp = {};
-        let vaccinedatatemp = {};
-        let firstdosetemp = {};
-        let seconddosetemp = {};
-        let dosetemp = {};
-        firstdosetemp["free"] = 0;
-        firstdosetemp["paid"] = 0;
-        seconddosetemp["free"] = 0;
-        seconddosetemp["paid"] = 0;
-        hospitaldatatemp["address"] = data[j]["address"];
-        hospitaldatatemp["name"] = data[j]["name"];
-        hospitaldatatemp["vaccine"] = data[j]["sessions"][k]["vaccine"];
-        hospitaldatatemp["fee_type"] = data[j]["fee_type"];
-        hospitaldatatemp["1stdose"] =
-          data[j]["sessions"][k]["available_capacity_dose1"];
-        hospitaldatatemp["2nddose"] =
-          data[j]["sessions"][k]["available_capacity_dose2"];
-        hospitaldatatemp["min_age"] = data[j]["sessions"][k]["min_age_limit"];
-        if ("vaccine_fees" in data[j]) {
-          for (let l = data[j]["vaccine_fees"].length - 1; l >= 0; l--) {
-            if (
-              (data[j]["vaccine_fees"][l]["vaccine"] =
-                hospitaldatatemp["vaccine"])
-            ) {
-              hospitaldatatemp["fees"] = Number(
-                data[j]["vaccine_fees"][l]["fee"]
-              );
-              break;
-            }
-          }
-        }
-        hospitaltemp.push(hospitaldatatemp);
-        if (data[j].fee_type == "Free") {
-          firstdosetemp["free"] += data[j].sessions[k].available_capacity_dose1;
-          seconddosetemp["free"] +=
-            data[j].sessions[k].available_capacity_dose2;
-          datetemp["total"] += firstdosetemp["free"] + seconddosetemp["free"];
-        } else {
-          firstdosetemp["paid"] += data[j].sessions[k].available_capacity_dose1;
-          seconddosetemp["paid"] +=
-            data[j].sessions[k].available_capacity_dose2;
-          datetemp["total"] += firstdosetemp["paid"] + seconddosetemp["paid"];
-        }
-        if (dosetemp.hasOwnProperty("1stdose")) {
-          dosetemp["1stdose"].free += firstdosetemp.free;
-          dosetemp["1stdose"].paid += firstdosetemp.paid;
-        } else {
-          dosetemp["1stdose"] = firstdosetemp;
-        }
-        if (dosetemp.hasOwnProperty("2nddose")) {
-          dosetemp["2nddose"].free += seconddosetemp.free;
-          dosetemp["2nddose"].paid += seconddosetemp.paid;
-        } else {
-          dosetemp["2nddose"] = seconddosetemp;
-        }
-        for (let m = 0; m < age_limits.length; m++) {
-          if (data[j]["sessions"][k]["min_age_limit"] == age_limits[m]) {
-            if (vaccinedatatemp.hasOwnProperty(age_limits[m])) {
-              vaccinedatatemp[`${age_limits[m]}`]["1stdose"]["free"] +=
-                dosetemp["1stdose"]["free"];
-              vaccinedatatemp[`${age_limits[m]}`]["1stdose"]["paid"] +=
-                dosetemp["1stdose"]["paid"];
-              vaccinedatatemp[`${age_limits[m]}`]["2nddose"]["free"] +=
-                dosetemp["2nddose"]["free"];
-              vaccinedatatemp[`${age_limits[m]}`]["2nddose"]["paid"] +=
-                dosetemp["2nddose"]["paid"];
-            } else {
-              vaccinedatatemp[`${age_limits[m]}`] = dosetemp;
-            }
-          }
-        }
-        for (let m = 0; m < vaccines.length; m++) {
-          if (data[j]["sessions"][k]["vaccine"] == vaccines[m]) {
-            if (vaccinetemp.hasOwnProperty(vaccines[m])) {
-              for (let l = 0; l < age_limits.length; l++) {
-                if (vaccinetemp[vaccines[m]].hasOwnProperty(age_limits[l])) {
-                  if (vaccinedatatemp.hasOwnProperty(age_limits[l])) {
-                    vaccinetemp[vaccines[m]][age_limits[l]]["1stdose"][
-                      "free"
-                    ] += vaccinedatatemp[age_limits[l]]["1stdose"]["free"];
-                    vaccinetemp[vaccines[m]][age_limits[l]]["1stdose"][
-                      "paid"
-                    ] += vaccinedatatemp[age_limits[l]]["1stdose"]["paid"];
-                    vaccinetemp[vaccines[m]][age_limits[l]]["2nddose"][
-                      "free"
-                    ] += vaccinedatatemp[age_limits[l]]["2nddose"]["free"];
-                    vaccinetemp[vaccines[m]][age_limits[l]]["2nddose"][
-                      "paid"
-                    ] += vaccinedatatemp[age_limits[l]]["2nddose"]["paid"];
-                  }
-                }
-              }
-            } else {
-              vaccinetemp[vaccines[m]] = vaccinedatatemp;
-            }
-          }
-        }
-        if (datetemp.hasOwnProperty("vaccine")) {
-          for (let m = 0; m < vaccines.length; m++) {
-            if (datetemp["vaccine"].hasOwnProperty(vaccines[m])) {
-              let arr = Object.getOwnPropertyNames(vaccinetemp);
-              if (vaccinetemp.hasOwnProperty(vaccines[m])) {
-                if (datetemp["vaccine"][vaccines[m]].hasOwnProperty(18)) {
-                  if (vaccinetemp[vaccines[m]].hasOwnProperty(18)) {
-                    datetemp["vaccine"][vaccines[m]]["18"]["1stdose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["18"]["1stdose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["18"]["1stdose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["18"]["1stdose"]["paid"];
-                    datetemp["vaccine"][vaccines[m]]["18"]["2nddose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["18"]["2nddose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["18"]["2nddose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["18"]["2nddose"]["paid"];
-                  } else if (
-                    !datetemp["vaccine"][vaccines[m]].hasOwnProperty(45) &&
-                    vaccinetemp[vaccines[m]].hasOwnProperty(45)
-                  ) {
-                    datetemp["vaccine"][vaccines[m]]["45"] =
-                      vaccinetemp[vaccines[m]]["45"];
-                  } else if (
-                    datetemp["vaccine"][vaccines[m]].hasOwnProperty(45) &&
-                    vaccinetemp[vaccines[m]].hasOwnProperty(45)
-                  ) {
-                    datetemp["vaccine"][vaccines[m]]["45"]["1stdose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["45"]["1stdose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["45"]["1stdose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["45"]["1stdose"]["paid"];
-                    datetemp["vaccine"][vaccines[m]]["45"]["2nddose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["45"]["2nddose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["45"]["2nddose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["45"]["2nddose"]["paid"];
-                  }
-                } else if (
-                  datetemp["vaccine"][vaccines[m]].hasOwnProperty(45)
-                ) {
-                  if (vaccinetemp[vaccines[m]].hasOwnProperty(45)) {
-                    datetemp["vaccine"][vaccines[m]]["45"]["1stdose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["45"]["1stdose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["45"]["1stdose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["45"]["1stdose"]["paid"];
-                    datetemp["vaccine"][vaccines[m]]["45"]["2nddose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["45"]["2nddose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["45"]["2nddose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["45"]["2nddose"]["paid"];
-                  } else if (
-                    !datetemp["vaccine"][vaccines[m]].hasOwnProperty(18) &&
-                    vaccinetemp[vaccines[m]].hasOwnProperty(18)
-                  ) {
-                    datetemp["vaccine"][vaccines[m]]["18"] =
-                      vaccinetemp[vaccines[m]]["18"];
-                  } else if (
-                    datetemp["vaccine"][vaccines[m]].hasOwnProperty(18) &&
-                    vaccinetemp[vaccines[m]].hasOwnProperty(18)
-                  ) {
-                    datetemp["vaccine"][vaccines[m]]["18"]["1stdose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["18"]["1stdose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["18"]["1stdose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["18"]["1stdose"]["paid"];
-                    datetemp["vaccine"][vaccines[m]]["18"]["2nddose"]["free"] +=
-                      vaccinetemp[vaccines[m]]["18"]["2nddose"]["free"];
-                    datetemp["vaccine"][vaccines[m]]["18"]["2nddose"]["paid"] +=
-                      vaccinetemp[vaccines[m]]["18"]["2nddose"]["paid"];
-                  }
-                }
-              } else if (datetemp["vaccine"].hasOwnProperty(`${arr[0]}`)) {
-                if (
-                  datetemp["vaccine"][`${arr[0]}`].hasOwnProperty(18) &&
-                  vaccinetemp[`${arr[0]}`].hasOwnProperty(18)
-                ) {
-                  datetemp["vaccine"][`${arr[0]}`]["18"]["1stdose"]["free"] +=
-                    vaccinetemp[`${arr[0]}`]["18"]["1stdose"]["free"];
-                  datetemp["vaccine"][`${arr[0]}`]["18"]["1stdose"]["paid"] +=
-                    vaccinetemp[`${arr[0]}`]["18"]["1stdose"]["paid"];
-                  datetemp["vaccine"][`${arr[0]}`]["18"]["2nddose"]["free"] +=
-                    vaccinetemp[`${arr[0]}`]["18"]["2nddose"]["free"];
-                  datetemp["vaccine"][`${arr[0]}`]["18"]["2nddose"]["paid"] +=
-                    vaccinetemp[`${arr[0]}`]["18"]["2nddose"]["paid"];
-                } else if (
-                  datetemp["vaccine"][`${arr[0]}`].hasOwnProperty(45) &&
-                  vaccinetemp[`${arr[0]}`].hasOwnProperty(45)
-                ) {
-                  datetemp["vaccine"][`${arr[0]}`]["45"]["1stdose"]["free"] +=
-                    vaccinetemp[`${arr[0]}`]["45"]["1stdose"]["free"];
-                  datetemp["vaccine"][`${arr[0]}`]["45"]["1stdose"]["paid"] +=
-                    vaccinetemp[`${arr[0]}`]["45"]["1stdose"]["paid"];
-                  datetemp["vaccine"][`${arr[0]}`]["45"]["2nddose"]["free"] +=
-                    vaccinetemp[`${arr[0]}`]["45"]["2nddose"]["free"];
-                  datetemp["vaccine"][`${arr[0]}`]["45"]["2nddose"]["paid"] +=
-                    vaccinetemp[`${arr[0]}`]["45"]["2nddose"]["paid"];
-                } else {
-                  let age = Object.getOwnPropertyNames(
-                    vaccinetemp[`${arr[0]}`]
-                  );
-                  datetemp["vaccine"][`${arr[0]}`][`${age}`] =
-                    vaccinetemp[`${arr[0]}`][`${age}`];
-                }
-              } else {
-                datetemp["vaccine"][`${arr[0]}`] = vaccinetemp[`${arr[0]}`];
-              }
-            }
-          }
-        } else {
-          datetemp["vaccine"] = vaccinetemp;
-        }
-      }
-    }
-    datetemp["Hospital"] = hospitaltemp;
-    datearray.push(datetemp);
-  }
-  datearray.sort((a, b) => {
+  result.sort((a, b) => {
     let date1 = a["value"].split("-");
     let date2 = b["value"].split("-");
     let dateObject1 = new Date(+date1[2], date1[1] - 1, +date1[0]);
     let dateObject2 = new Date(+date2[2], date2[1] - 1, +date2[0]);
     return dateObject1 - dateObject2;
   });
-  res["date"] = datearray;
-  return res;
-}
-function validatePin(str) {
-  let pattern = new RegExp("^[1-9]{1}[0-9]{2}[0-9]{3}$");
-  return pattern.test(str);
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[i].sessions.length; j++) {
+      let index = result.findIndex((e) => {
+        return e.value === data[i].sessions[j].date;
+      });
+      if (index != -1) {
+        let arr = [12, 18, 45];
+        result[index].available_capacity +=
+          data[i].sessions[j].available_capacity;
+        result[index].available_capacity_dose1 +=
+          data[i].sessions[j].available_capacity_dose1;
+        result[index].available_capacity_dose2 +=
+          data[i].sessions[j].available_capacity_dose2;
+        if ("available_capacity_dose3" in data[i].sessions[j]) {
+          result[index].available_capacity_dose3 +=
+            data[i].sessions[j].available_capacity_dose3 || 0;
+        }
+        if (!result[index].fee_type.includes(data[i].fee_type)) {
+          result[index].fee_type.push(data[i].fee_type);
+        }
+        if (!(data[i].sessions[j].vaccine in result[index].vaccine)) {
+          result[index].vaccine[`${data[i].sessions[j].vaccine}`] = {};
+        }
+        if (
+          !(
+            data[i].sessions[j].min_age_limit in
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`]
+          )
+        ) {
+          result[index].vaccine[`${data[i].sessions[j].vaccine}`][
+            `${data[i].sessions[j].min_age_limit}`
+          ] = {};
+        }
+        let id = arr.findIndex((e) => data[i].sessions[j].min_age_limit === e);
+        if (data[i].sessions[j].allow_all_age) {
+          if (id != -1) {
+            for (let k = id + 1; k < arr.length; k++) {
+              if (
+                !(
+                  arr[k] in
+                  result[index].vaccine[`${data[i].sessions[j].vaccine}`]
+                )
+              ) {
+                result[index].vaccine[`${data[i].sessions[j].vaccine}`][
+                  arr[k]
+                ] = {};
+              }
+            }
+          }
+        }
+        for (let k = id; k < arr.length; k++) {
+          if (
+            "1stdose" in
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]]
+          ) {
+            // result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+            //   "1stdose"
+            // ] += data[i].sessions[j].available_capacity_dose1;
+            if (
+              data[i]["fee_type"] in
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "1stdose"
+              ]
+            ) {
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "1stdose"
+              ][`${data[i]["fee_type"]}`] +=
+                data[i].sessions[j].available_capacity_dose1;
+            } else {
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "1stdose"
+              ][`${data[i]["fee_type"]}`] =
+                data[i].sessions[j].available_capacity_dose1;
+            }
+          } else {
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+              "1stdose"
+            ] = {};
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+              "1stdose"
+            ][`${data[i]["fee_type"]}`] =
+              data[i].sessions[j].available_capacity_dose1;
+          }
+          if (
+            "2nddose" in
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]]
+          ) {
+            // result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+            //   "2nddose"
+            // ] += data[i].sessions[j].available_capacity_dose2;
+            if (
+              data[i]["fee_type"] in
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "2nddose"
+              ]
+            ) {
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "2nddose"
+              ][`${data[i]["fee_type"]}`] +=
+                data[i].sessions[j].available_capacity_dose2;
+            } else {
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "2nddose"
+              ][`${data[i]["fee_type"]}`] =
+                data[i].sessions[j].available_capacity_dose2;
+            }
+          } else {
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+              "2nddose"
+            ] = {};
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+              "2nddose"
+            ][`${data[i]["fee_type"]}`] =
+              data[i].sessions[j].available_capacity_dose2;
+          }
+          if (
+            "3rddose" in
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]]
+          ) {
+            // result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+            //   "3rddose"
+            // ] += data[i].sessions[j].available_capacity_dose3 || 0;
+            if (
+              data[i]["fee_type"] in
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "3rddose"
+              ]
+            ) {
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "3rddose"
+              ][`${data[i]["fee_type"]}`] +=
+                data[i].sessions[j].available_capacity_dose3 || 0;
+            } else {
+              result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+                "3rddose"
+              ][`${data[i]["fee_type"]}`] =
+                data[i].sessions[j].available_capacity_dose3 || 0;
+            }
+          } else {
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+              "3rddose"
+            ] = {};
+            result[index].vaccine[`${data[i].sessions[j].vaccine}`][arr[k]][
+              "3rddose"
+            ][`${data[i]["fee_type"]}`] =
+              data[i].sessions[j].available_capacity_dose3 || 0;
+          }
+          if (!data[i].sessions[j].allow_all_age) {
+            break;
+          }
+        }
+        let fee = null;
+        if (/paid/i.test(data[i].fee_type)) {
+          if (typeof data[i].vaccine_fees !== "undefined") {
+            for (let t = 0; t < data[i].vaccine_fees.length; t++) {
+              if (
+                data[i].sessions[j].vaccine === data[i].vaccine_fees[t].vaccine
+              ) {
+                fee = +data[i].vaccine_fees[t].fee;
+              }
+            }
+          } else {
+            if (data[i].sessions[j].vaccine === "COVISHIELD") {
+              fee = 780;
+            } else if (data[i].sessions[j].vaccine === "COVAXIN") {
+              fee = 1145;
+            } else if (data[i].sessions[j].vaccine === "SPUTNIK V") {
+              fee = 1200;
+            }
+          }
+        }
+        result[index].Hospital.push({
+          name: data[i].name,
+          address: data[i].address,
+          pincode: data[i].pincode,
+          block_name: data[i].block_name,
+          district_name: data[i].district_name,
+          state_name: data[i].state_name,
+          allow_all_age: data[i].sessions[j].allow_all_age,
+          min_age_limit: data[i].sessions[j].min_age_limit,
+          available_capacity: data[i].sessions[j].available_capacity,
+          "1stdose": data[i].sessions[j].available_capacity_dose1,
+          "2nddose": data[i].sessions[j].available_capacity_dose2,
+          "3rddose": data[i].sessions[j].available_capacity_dose3 || 0,
+          fee_type: data[i].fee_type,
+          vaccine: data[i].sessions[j].vaccine,
+          fees: fee || 0,
+        });
+      }
+    }
+  }
+  let out = { date: result };
+  return out;
 }
 function PinValid(type) {
   var val;
@@ -2736,7 +2784,7 @@ function PinValid(type) {
     } else {
       ip = document.getElementById("pininput0");
     }
-    ip.setAttribute("class", "form-control mr-sm-2 bg-white text-black");
+    ip.setAttribute("class", "form-control mr-sm-2 text-white");
     let d = document.getElementById("invalid-feedback");
     if (d) {
       d.remove();
