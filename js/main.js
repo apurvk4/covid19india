@@ -942,6 +942,7 @@ function changeData(copy) {
     }
   }
   if (Button.isClicked("18+") && !Button.isClicked("45+")) {
+    console.log(copy);
     for (let j = 0; j < copy["date"].length; j++) {
       let arr = Object.getOwnPropertyNames(copy["date"][j]["vaccine"]);
       for (let i = 0; i < arr.length; i++) {
@@ -953,7 +954,7 @@ function changeData(copy) {
     for (let i = 0; i < copy["date"].length; i++) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
-        if (copy["date"][i]["Hospital"][j]["min_age"] == 45) {
+        if (copy["date"][i]["Hospital"][j]["min_age_limit"] == 45) {
           copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][j]["1stdose"] +
             copy["date"][i]["Hospital"][j]["2nddose"];
@@ -980,7 +981,10 @@ function changeData(copy) {
     for (let i = 0; i < copy["date"].length; i++) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
-        if (copy["date"][i]["Hospital"][j]["min_age"] == 18) {
+        if (
+          copy["date"][i]["Hospital"][j]["min_age_limit"] == 18 &&
+          !copy["date"][i]["Hospital"][j]["allow_all_age"]
+        ) {
           copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][j]["1stdose"] +
             copy["date"][i]["Hospital"][j]["2nddose"];
@@ -2468,10 +2472,25 @@ function addBadges(obj, index) {
     if (obj.length == 0) {
       return "";
     } else {
-      let res = `<span class="badge badge-info" title="this date has this vaccine available">${obj[index]["vaccine"]}</span> `;
-      res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
-        obj[index]["min_age_limit"] + "+"
-      }</span> `;
+      let res = "";
+      res = `<span class="badge badge-info" title="this date has this vaccine available">${obj[index]["vaccine"]}</span> `;
+      if (!obj[index]["allow_all_age"]) {
+        res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
+          obj[index]["min_age_limit"] + "+"
+        }</span> `;
+      } else {
+        let age = [12, 18, 45];
+        let i = age.findIndex((e) => {
+          return e === obj[index]["min_age_limit"];
+        });
+        if (i != -1) {
+          for (; i < age.length; i++) {
+            res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
+              age[i] + "+"
+            }</span> `;
+          }
+        }
+      }
       res += `<span class="badge badge-info" title="this date has vaccines available by this mode of payment">${
         obj[index]["fee_type"] == "Paid"
           ? "Paid(&#x20B9; " + obj[index]["fees"] + ")"
