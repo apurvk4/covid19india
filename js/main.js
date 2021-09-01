@@ -5,6 +5,34 @@ function scroll() {
   document.body.scrollTop = 0; // For Safari
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("linkedin-in").addEventListener("mouseover", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("linkedin-in1").classList = "show";
+  });
+  document
+    .getElementById("linkedin-in1")
+    .addEventListener("mouseleave", (e) => {
+      e.currentTarget.classList = "hide";
+      document.getElementById("linkedin-in").classList = "show";
+    });
+  document.getElementById("instagram").addEventListener("mouseover", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("instagram1").classList = "show";
+  });
+  document.getElementById("instagram1").addEventListener("mouseleave", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("instagram").classList = "show";
+  });
+  document.getElementById("github").addEventListener("mouseover", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("github1").classList = "show";
+  });
+  document.getElementById("github1").addEventListener("mouseleave", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("github").classList = "show";
+  });
+});
 function PinSearch(type, cb) {
   var input;
   var val;
@@ -2117,9 +2145,9 @@ var showData = (function () {
           data[startIndex]["3rddose"] > 0
             ? "list-group-item-success"
             : "list-group-item-secondary"
-        }" id="dose3">${
-          data[startIndex]["3rddose"]
-        }</li></ul></div></div></div>`;
+        }" id="dose3" style="display:${
+          data[startIndex]["3rddose"] > 0 ? "block" : "none"
+        }" >${data[startIndex]["3rddose"]}</li></ul></div></div></div>`;
         for (let i = startIndex + 1; i < lastIndex; i++) {
           div.innerHTML += `<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${
             data[i]["1stdose"] > 0 ||
@@ -2151,7 +2179,9 @@ var showData = (function () {
             data[i]["3rdddose"] > 0
               ? "list-group-item-success"
               : "list-group-item-secondary"
-          }" id="dose3">${data[i]["3rddose"]}</li>
+          }" id="dose3" style="display:${
+            data[i]["3rddose"] > 0 ? "block" : "none"
+          }" >${data[i]["3rddose"]}</li>
           </ul></div></div></div>`;
         }
       } else {
