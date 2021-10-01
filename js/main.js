@@ -5,6 +5,34 @@ function scroll() {
   document.body.scrollTop = 0; // For Safari
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("linkedin-in").addEventListener("mouseover", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("linkedin-in1").classList = "show";
+  });
+  document
+    .getElementById("linkedin-in1")
+    .addEventListener("mouseleave", (e) => {
+      e.currentTarget.classList = "hide";
+      document.getElementById("linkedin-in").classList = "show";
+    });
+  document.getElementById("instagram").addEventListener("mouseover", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("instagram1").classList = "show";
+  });
+  document.getElementById("instagram1").addEventListener("mouseleave", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("instagram").classList = "show";
+  });
+  document.getElementById("github").addEventListener("mouseover", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("github1").classList = "show";
+  });
+  document.getElementById("github1").addEventListener("mouseleave", (e) => {
+    e.currentTarget.classList = "hide";
+    document.getElementById("github").classList = "show";
+  });
+});
 function PinSearch(type, cb) {
   var input;
   var val;
@@ -914,6 +942,7 @@ function changeData(copy) {
     }
   }
   if (Button.isClicked("18+") && !Button.isClicked("45+")) {
+    console.log(copy);
     for (let j = 0; j < copy["date"].length; j++) {
       let arr = Object.getOwnPropertyNames(copy["date"][j]["vaccine"]);
       for (let i = 0; i < arr.length; i++) {
@@ -925,7 +954,7 @@ function changeData(copy) {
     for (let i = 0; i < copy["date"].length; i++) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
-        if (copy["date"][i]["Hospital"][j]["min_age"] == 45) {
+        if (copy["date"][i]["Hospital"][j]["min_age_limit"] == 45) {
           copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][j]["1stdose"] +
             copy["date"][i]["Hospital"][j]["2nddose"];
@@ -952,7 +981,10 @@ function changeData(copy) {
     for (let i = 0; i < copy["date"].length; i++) {
       for (let j = 0; j < copy["date"][i]["Hospital"].length; j++) {
         let l = copy["date"][i]["Hospital"].length - 1;
-        if (copy["date"][i]["Hospital"][j]["min_age"] == 18) {
+        if (
+          copy["date"][i]["Hospital"][j]["min_age_limit"] == 18 &&
+          !copy["date"][i]["Hospital"][j]["allow_all_age"]
+        ) {
           copy["date"][i]["available_capacity"] -=
             copy["date"][i]["Hospital"][j]["1stdose"] +
             copy["date"][i]["Hospital"][j]["2nddose"];
@@ -2117,9 +2149,9 @@ var showData = (function () {
           data[startIndex]["3rddose"] > 0
             ? "list-group-item-success"
             : "list-group-item-secondary"
-        }" id="dose3">${
-          data[startIndex]["3rddose"]
-        }</li></ul></div></div></div>`;
+        }" id="dose3" style="display:${
+          data[startIndex]["3rddose"] > 0 ? "block" : "none"
+        }" >${data[startIndex]["3rddose"]}</li></ul></div></div></div>`;
         for (let i = startIndex + 1; i < lastIndex; i++) {
           div.innerHTML += `<div class="card" onclick="DelegateClick(${i})"><div class="d-flex card-header ${
             data[i]["1stdose"] > 0 ||
@@ -2151,7 +2183,9 @@ var showData = (function () {
             data[i]["3rdddose"] > 0
               ? "list-group-item-success"
               : "list-group-item-secondary"
-          }" id="dose3">${data[i]["3rddose"]}</li>
+          }" id="dose3" style="display:${
+            data[i]["3rddose"] > 0 ? "block" : "none"
+          }" >${data[i]["3rddose"]}</li>
           </ul></div></div></div>`;
         }
       } else {
@@ -2438,10 +2472,25 @@ function addBadges(obj, index) {
     if (obj.length == 0) {
       return "";
     } else {
-      let res = `<span class="badge badge-info" title="this date has this vaccine available">${obj[index]["vaccine"]}</span> `;
-      res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
-        obj[index]["min_age_limit"] + "+"
-      }</span> `;
+      let res = "";
+      res = `<span class="badge badge-info" title="this date has this vaccine available">${obj[index]["vaccine"]}</span> `;
+      if (!obj[index]["allow_all_age"]) {
+        res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
+          obj[index]["min_age_limit"] + "+"
+        }</span> `;
+      } else {
+        let age = [12, 18, 45];
+        let i = age.findIndex((e) => {
+          return e === obj[index]["min_age_limit"];
+        });
+        if (i != -1) {
+          for (; i < age.length; i++) {
+            res += `<span class="badge badge-info" title="this date has vaccines available for this age-group">${
+              age[i] + "+"
+            }</span> `;
+          }
+        }
+      }
       res += `<span class="badge badge-info" title="this date has vaccines available by this mode of payment">${
         obj[index]["fee_type"] == "Paid"
           ? "Paid(&#x20B9; " + obj[index]["fees"] + ")"

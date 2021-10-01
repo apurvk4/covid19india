@@ -79,7 +79,8 @@ a:hover,
 #agefilter:hover,
 #flexDistrict:hover,
 #flexPincode:hover {
-  box-shadow: 0 0 0.5rem 0.4rem white;
+  box-shadow: 0 0 0.5rem 0.4rem #1b365c;
+  background-color: #5885af;
 }
 #MainContent {
   margin: 0;
@@ -224,6 +225,12 @@ nav input,
 nav input:active {
   background-color: #7ea1c4 !important;
 }
+nav > div > ul > li > a:active,
+nav > div > ul > li > a:hover {
+  border-radius: 40px;
+  background-color: #5885af;
+  box-shadow: 0 0 0.5rem 0.4rem #1b365c;
+}
 .navbar-toggler:active,
 .navbar-toggler:hover,
 .navbar-toggler:focus,
@@ -253,12 +260,17 @@ h5 {
   position: absolute;
   width: 100%;
 }
-.filter {
-  filter: invert(18%) sepia(11%) saturate(3306%) hue-rotate(176deg)
-    brightness(101%) contrast(95%);
+.show {
+  display: block;
 }
-.filter:hover,
-.filter:active {
+.hide {
+  display: none;
+}
+.filter {
+  filter: brightness(0.5) sepia(1) hue-rotate(140deg) saturate(6);
+}
+.filtergit:hover,
+.filtergit:active {
   filter: brightness(0.5) sepia(1) hue-rotate(140deg) saturate(6);
 }
 @keyframes spin {
